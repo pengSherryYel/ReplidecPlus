@@ -1,10 +1,13 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 if [ $# == 0 ];then
-    echo -e "Usage: $0 <list> <resultDir>
+    echo -e "Usage: $0 <list> <resultDir> <outputfile>
        list: two coloumn sampleID  fnapath (tab sep)
        Ps: for single run: optput  willbe in deephage dir:sampleID.deephage.csv
-           deephage_single inputseq sampleID "
+           deephage_single inputseq sampleID 
+       Example:(test_dir)
+       sh ../src/run_Deephage.sh ./example.txt ./RepliPhage/deephage deephage_opt.tsv ../resoruces ""
+       "
     exit 0
 
 fi
@@ -14,34 +17,38 @@ fi
 function cpdeePhage(){
     local wd=${1:-"."}
     local wdpath=`realpath $wd`
-    mkdir -p $wdpath
+    local resources_dir=$2
     if [ ! -e "$wdpath/DeePhage" ];then
         echo "copy deephage script to $wdpath"
-        cp -r /home/viro/xue.peng/software_home/DeePhage $wdpath
+        cp -r $resources_dir/DeePhage $wdpath
         echo 'done'
+    else
+        echo "DeePhage source code exist in $wdpath"
     fi
 }
 
 
 ## input is list with two coloumn sampleID \t fapath
 function deephage_single(){
-    inputseq=$1
+    local inputseq=$1
     local sampleID=${2:-'test'}
     opt="$sampleID.deephage.csv"
 
     cd ./DeePhage
-    $deephage $inputseq $opt 
+    ./DeePhage $inputseq $opt 
     cd ..
-
 }
 
+######################
+### program  #########
+######################
 
-## prepare environment
 input_seq_list=$1
 workdir=$2
 summary=$3
-db=$4
+db=${4}
 otherpara=${5:-""}
+
 
 ## activate conda
 echo "RUN DeePhage"
@@ -49,31 +56,38 @@ conda_path=`which conda`
 conda_tmp=`dirname $conda_path`
 conda_home=`dirname $conda_tmp`
 source $conda_home/etc/profile.d/conda.sh
+conda activate RP_deephage
 
 
-## enter wkdir
+## prepare environment
+## enter wkdir and copy Deephage
 currentdir=`pwd`
-indexfullpath=`realpath input_seq_list`
-cd $2
-deephage="%s/DeePhage"%workdir
-summaryopt=$summar
+indexfullpath=`realpath $input_seq_list`
+
+mkdir -p $workdir
+ 
+deephage_source_dir=$db
+cpdeePhage $workdir $deephage_source_dir
+
+cd $workdir
+
 
 ## example for batch
 # input file is two column file. sampleID \t filepath
-summaryopt="$1.DeePhage.opt"
+summaryopt=$summary
 echo -e "sampleID,contig,length,score,lifestyle" >$summaryopt
 
 while IFS=$'\t' read -ra line;do
     echo "process $line"
     sampleID=${line[0]}
     filePath=`echo ${line[1]}|sed 's/\n$//g'`
-    #echo $filePath
+    echo $filePath
 
     ## reassign the variable. pay attention
     deephage_single $filePath $sampleID &&\
     tail -n +2 ./DeePhage/$opt|sed "s/^/$sampleID,/" >> $summaryopt
 done < $indexfullpath
 
-conda deactivate
+conda deactivate 
 cd $currentdir
 

@@ -8,6 +8,7 @@ import re
 from threading import Thread
 from collections import defaultdict
 import pandas as pd
+from time import sleep
 
 ################
 ## default #####
@@ -41,9 +42,8 @@ anno.add_argument('-rf', '--replidecF',action='store_true',dest="replidecF",defa
 
 ##Deephage
 anno.add_argument('-d', '--deephage',action='store_true',dest="deephage",default=False, help="run deephage")
-anno.add_argument('-kc', '--keggC',type=float, default="1e-5", dest="kc", help="kegg creteria. discard the not meet this creteria")
-#anno.add_argument('-kf', '--keggF',action='store_true',dest="kf",default=False, help="force rerun kegg")
-#
+anno.add_argument('-df', '--deephageF',action='store_true',dest="deephageF",default=False, help="force rerun deephage")
+
 #anno.add_argument('-v', '--vog',action='store_true',dest="vog",default=False, help="run vog")
 #anno.add_argument('-vc', '--vogC',type=float, default="1e-5", dest="vc", help="vogdb creteria. discard the not meet this creteria")
 #anno.add_argument('-vf', '--vogF',action='store_true',dest="vf",default=False, help="force rerun vog")
@@ -81,8 +81,11 @@ print("Results will be store at %s"%outputD)
 if not os.path.exists(str(outputD)):
     Popen('mkdir -P ' + str(outputD) + ' 2>/dev/null', shell=True)
 
-## check script file
+## check script file and related file
 replidec_src=os.path.join(script_dir,"src/run_Replidec.sh")
+
+deephage_src=os.path.join(script_dir,"src/run_Deephage.sh")
+deephage_source_code=os.path.join(script_dir,"resoruces/Deephage")
 
 #pfam_db=os.path.join(databases,"Pfam-A.hmm")
 #vog_db=os.path.join(databases,"VOGDB_phage.HMM")
@@ -126,7 +129,7 @@ replidec_src=os.path.join(script_dir,"src/run_Replidec.sh")
 
 def oneStepRun(inputfile, prefix, wd, db, outD, src, otherPara="", force=False):
     print("###### %s begin ######"%prefix)
-    print("%s force:"%prefix,force)
+    print("###### %s force:"%prefix,force)
 
     if prefix == "replidec":
         outPath = "%s/%s.%s.opt.tsv" % (wd,prefix, db)
@@ -139,8 +142,22 @@ def oneStepRun(inputfile, prefix, wd, db, outD, src, otherPara="", force=False):
             obj=Popen(replidec_cmd, shell=True)
             obj.wait()
         else:
-            print("Skip %s the running part, cause output file found!"%prefix)
-     
+            print("###### Skip %s the running part, cause output file found!"%prefix)
+    
+    elif prefix == "deephage":
+        outPath = "%s/%s.opt.tsv" % (wd,prefix) 
+
+        if not os.path.exists(outPath) or force:
+            deephage_cmd="sh {src} {inputf} {wd} {summary} {db} '{para}' 2>&1 >deephage.log".format(
+                    src=src, inputf=inputfile, wd=wd, summary="%s.opt.tsv"%(prefix),
+                    db=db, para=otherPara)
+            print(deephage_cmd)
+            obj=Popen(deephage_cmd, shell=True)
+            obj.wait()
+        else:
+            print("###### Skip %s the running part, cause output file found!"%prefix)
+
+
     #elif prefix == "phmmer":
     #    hmm_outPath = "%s/%s.phmmer.tblout" % (wd, prefix)
     #    dbseq = db
@@ -149,7 +166,7 @@ def oneStepRun(inputfile, prefix, wd, db, outD, src, otherPara="", force=False):
     #    else:
     #        print("Skip %s the running part, cause output file found!"%prefix)
     #    annoD = load_hmmsearch_opt(hmm_outPath, creteria=1e-5, reverse=True)
-    outD[prefix] = outPath
+    outD[prefix] = os.path.realpath(outPath)
     print("###### %s end ######"%prefix)
 
 def split_dict_for_pandas(indict):
@@ -170,7 +187,7 @@ def split_dict_for_pandas(indict):
 ###########################
 
 outD = {}
-###########################  Run/Parse KEGG hmmsearch #########################
+###########################  Run Replidec  #########################
 if args.replidec:
     replidecOptD=os.path.join(outputD,"replidec")
     argsL = [input_list, "replidec", replidecOptD, args.replidec_db, outD]
@@ -178,24 +195,24 @@ if args.replidec:
                 "force":args.replidecF,
                 'src':replidec_src}
     
-    replidect = Thread(target=oneStepRun,args=argsL, kwargs=kwargsD, daemon = True)
+    replidect = Thread(target=oneStepRun,args=argsL, kwargs=kwargsD)
     replidect.start()
     #runHmmsearch(input_faa, "kegg", keggOptD, kegg_db, otherPara="-T 40 --cpu %s"%(thread))
 
-############################  Run/Parse VOG hmmsearch ##########################
-#if args.vog:
-#    vogOptD=os.path.join(outputD,"vog")
-#    argsL = [input_faa, "vog", vogOptD, vog_db, outD]
-#    kwargsD = {"otherPara":"-T 40 --cpu %s"%(thread),
-#                "creteria":args.vc,
-#                "force":args.vf,
-#                "program":"hmmsearch"}
-#
-#    vogt = Thread(target=oneStepRun,args=argsL, kwargs=kwargsD)
-#    vogt.start()
-#    #runHmmsearch(input_faa, "vog", vogOptD, vog_db, otherPara="-T 40 --cpu %s"%(thread))
-#
-#
+############################  Run DeePhage  ##########################
+if args.deephage:
+    sleep(1)
+    deephageOptD=os.path.join(outputD,"deephage")
+    argsL = [input_list, "deephage", deephageOptD, deephage_source_code, outD]
+    kwargsD = {"otherPara":"",
+                "force":args.deephageF,
+                "src":deephage_src}
+
+    deephaget = Thread(target=oneStepRun,args=argsL, kwargs=kwargsD)
+    deephaget.start()
+    #runHmmsearch(input_faa, "vog", vogOptD, vog_db, otherPara="-T 40 --cpu %s"%(thread))
+
+
 ############################  Run/Parse pfam hmmsearch ##########################
 #if args.pfam:
 #    pfamOptD=os.path.join(outputD,"pfam")
@@ -247,9 +264,9 @@ if args.replidec:
 ############################
 if args.replidec:
     replidect.join()
-#
-#if args.vog:
-#    vogt.join()
+
+if args.deephage:
+    deephaget.join()
 #
 #if args.pfam:
 #    pfamt.join()
