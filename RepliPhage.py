@@ -44,10 +44,10 @@ anno.add_argument('-rf', '--replidecF',action='store_true',dest="replidecF",defa
 anno.add_argument('-d', '--deephage',action='store_true',dest="deephage",default=False, help="run deephage")
 anno.add_argument('-df', '--deephageF',action='store_true',dest="deephageF",default=False, help="force rerun deephage")
 
-#anno.add_argument('-v', '--vog',action='store_true',dest="vog",default=False, help="run vog")
-#anno.add_argument('-vc', '--vogC',type=float, default="1e-5", dest="vc", help="vogdb creteria. discard the not meet this creteria")
-#anno.add_argument('-vf', '--vogF',action='store_true',dest="vf",default=False, help="force rerun vog")
-#
+##BACPHLIP
+anno.add_argument('-b', '--bacphlip',action='store_true',dest="bacphlip",default=False, help="run bacphlip")
+anno.add_argument('-bf', '--bacphlipF',action='store_true',dest="bacphlipF",default=False, help="force rerun bacphlipF")
+
 #anno.add_argument('-p', '--pfam',action='store_true',dest="pfam",default=False, help="run pfam")
 #anno.add_argument('-pc', '--pfamC',type=float, default="1e-5", dest="pc", help="pfam creteria. discard the not meet this creteria")
 #anno.add_argument('-pf', '--pfamF',action='store_true',dest="pf",default=False, help="force rerun pfam")
@@ -87,7 +87,8 @@ replidec_src=os.path.join(script_dir,"src/run_Replidec.sh")
 deephage_src=os.path.join(script_dir,"src/run_Deephage.sh")
 deephage_source_code=os.path.join(script_dir,"resoruces/Deephage")
 
-#pfam_db=os.path.join(databases,"Pfam-A.hmm")
+bacphlip_src=os.path.join(script_dir,"src/run_bacphlip.sh")
+
 #vog_db=os.path.join(databases,"VOGDB_phage.HMM")
 #phrog_db=os.path.join(databases,"all_phrogs.hmm")
 #phrog_db_anno=os.path.join(databases,"phrog_annot.tsv")
@@ -129,8 +130,9 @@ deephage_source_code=os.path.join(script_dir,"resoruces/Deephage")
 
 def oneStepRun(inputfile, prefix, wd, db, outD, src, otherPara="", force=False):
     print("###### %s begin ######"%prefix)
-    print("###### %s force:"%prefix,force)
+    print("%s force:"%prefix,force)
 
+    ##### replidec ########
     if prefix == "replidec":
         outPath = "%s/%s.%s.opt.tsv" % (wd,prefix, db)
 
@@ -142,8 +144,9 @@ def oneStepRun(inputfile, prefix, wd, db, outD, src, otherPara="", force=False):
             obj=Popen(replidec_cmd, shell=True)
             obj.wait()
         else:
-            print("###### Skip %s the running part, cause output file found!"%prefix)
+            print("Skip %s the running part, cause output file found!"%prefix)
     
+    ##### deephage ########
     elif prefix == "deephage":
         outPath = "%s/%s.opt.tsv" % (wd,prefix) 
 
@@ -155,9 +158,21 @@ def oneStepRun(inputfile, prefix, wd, db, outD, src, otherPara="", force=False):
             obj=Popen(deephage_cmd, shell=True)
             obj.wait()
         else:
-            print("###### Skip %s the running part, cause output file found!"%prefix)
+            print("Skip %s the running part, cause output file found!"%prefix)
 
+    ##### bacphlip ########
+    elif prefix == "bacphlip":
+        outPath = "%s/bacphlip_report.txt" % (wd)
 
+        if not os.path.exists(outPath) or force:
+            bacphlip_cmd="sh {src} {inputf} {wd} {summary} {db} '{para}' 2>&1 >bacphlip.log".format(
+                    src=src, inputf=inputfile, wd=wd, summary="%s.opt.tsv"%(prefix),
+                    db=db, para=otherPara)
+            print(bacphlip_cmd)
+            obj=Popen(bacphlip_cmd, shell=True)
+            obj.wait()
+        else:
+            print("Skip %s the running part, cause output file found!"%prefix)
     #elif prefix == "phmmer":
     #    hmm_outPath = "%s/%s.phmmer.tblout" % (wd, prefix)
     #    dbseq = db
@@ -201,7 +216,7 @@ if args.replidec:
 
 ############################  Run DeePhage  ##########################
 if args.deephage:
-    sleep(1)
+    sleep(0.5)
     deephageOptD=os.path.join(outputD,"deephage")
     argsL = [input_list, "deephage", deephageOptD, deephage_source_code, outD]
     kwargsD = {"otherPara":"",
@@ -213,20 +228,20 @@ if args.deephage:
     #runHmmsearch(input_faa, "vog", vogOptD, vog_db, otherPara="-T 40 --cpu %s"%(thread))
 
 
-############################  Run/Parse pfam hmmsearch ##########################
-#if args.pfam:
-#    pfamOptD=os.path.join(outputD,"pfam")
-#    argsL = [input_faa, "pfam", pfamOptD, pfam_db, outD]
-#    kwargsD = {"otherPara":"-T 40 --cpu %s"%(thread),
-#                "creteria":args.pc,
-#                "force":args.pf,
-#                "program":"hmmsearch"}
-#
-#    pfamt = Thread(target=oneStepRun,args=argsL, kwargs=kwargsD)
-#    pfamt.start()
-#    #runHmmsearch(input_faa, "pfam", pfamOptD, pfam_db, otherPara="-T 40 --cpu %s"%(thread))
-#
-############################  Run/Parse PHROG hmmsearch ##########################
+############################  Run BACPHLIP ##########################
+if args.bacphlip:
+    sleep(1)
+    bacphlipOptD=os.path.join(outputD,"bacphlip")
+    argsL = [input_list, "bacphlip", bacphlipOptD, "", outD]
+    kwargsD = {"otherPara":"",
+                "force":args.bacphlipF,
+                "src":bacphlip_src}
+
+    bacphlipt = Thread(target=oneStepRun,args=argsL, kwargs=kwargsD)
+    bacphlipt.start()
+    #runHmmsearch(input_faa, "pfam", pfamOptD, pfam_db, otherPara="-T 40 --cpu %s"%(thread))
+
+###########################  Run/Parse PHROG hmmsearch ##########################
 #if args.phrog:
 #    phrogOptD=os.path.join(outputD,"phrog")
 #    argsL = [input_faa, "phrog", phrogOptD, phrog_db, outD]
@@ -267,10 +282,10 @@ if args.replidec:
 
 if args.deephage:
     deephaget.join()
-#
-#if args.pfam:
-#    pfamt.join()
-#
+
+if args.bacphlip:
+    bacphlipt.join()
+
 #if args.phrog:
 #    phrogt.join()
 #

@@ -1,4 +1,4 @@
-#!/project/genomics/xuePeng/software/python3.9.5/bin/python3.9
+#!/usr/bin/env python
 # coding: utf-8
 
 import bacphlip
@@ -54,7 +54,7 @@ def bacphlip_predict(seqfile,optdir,force_overwrite=True, local_hmmsearch="/home
 
 def batch_bacphlip_predict(seqfileList,optdir,force_overwrite=True, local_hmmsearch="/home/viro/xue.peng/.linuxbrew/bin/hmmsearch"):
     mkdirs(optdir)
-    opt = open("%s.bacphlip_report.txt"%optdir,"w")
+    opt = open("%s/bacphlip_report.txt"%optdir,"w")
     opt.flush()
     opt.write("sampleID\tbacphlip_ressult\tVirulent|Temperate_score\tfilePath\n")
     n=0
