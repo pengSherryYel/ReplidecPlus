@@ -88,7 +88,6 @@ dependencies:
   - pillow=8.4.0
   - pip=21.2.4
   - platformdirs=2.4.0
-  - pprodigal=1.0.1
   - prodigal=2.6.3
   - protobuf=3.17.2
   - pycparser=2.21

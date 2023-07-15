@@ -6,7 +6,7 @@ if [ $# == 0 ];then
        Ps: for single run: optput  willbe in deephage dir:sampleID.deephage.csv
            deephage_single inputseq sampleID 
        Example:(test_dir)
-       sh ../src/run_Deephage.sh ./example.txt ./RepliPhage/deephage deephage_opt.tsv ../resoruces ""
+       sh ../src/run_Deephage.sh ./example.txt ./RepliPhage/deephage deephage_opt.tsv ../resources ""
        "
     exit 0
 

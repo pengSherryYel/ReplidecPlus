@@ -4,8 +4,8 @@ echo "downloading DeePhage"
 git clone git@github.com:shufangwu/DeePhage.git ../resources/
 
 echo "downloading MATLAB Runtime Installer need by DeePhage"
-r_dir="../resoruces/mcr_tmp"
-mcr94_dir='../resoruces/mcr_v94'
+r_dir="../resources/mcr_tmp"
+mcr94_dir='../resources/mcr_v94'
 mcr94_dir_realpath=`realpath $mcr94_dir`
 mkdir -p $r_dir
 mkdir -p $mcr94_dir

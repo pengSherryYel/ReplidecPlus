@@ -1,29 +1,38 @@
 name: RP_phacts
 channels:
+  - bioconda
   - defaults
 dependencies:
+  - _libgcc_mutex=0.1
+  - _openmp_mutex=5.1
   - bzip2=1.0.8
   - ca-certificates=2023.05.30
+  - ld_impl_linux-64=2.38
   - libffi=3.4.4
+  - libgcc-ng=11.2.0
+  - libgomp=11.2.0
+  - libstdcxx-ng=11.2.0
+  - libuuid=1.41.5
   - ncurses=6.4
   - openssl=3.0.9
+  - pip=23.1.2
+  - prodigal=2.6.3
   - python=3.11.3
   - readline=8.2
+  - setuptools=67.8.0
   - sqlite=3.41.2
   - tk=8.6.12
   - tzdata=2023c
+  - wheel=0.38.4
   - xz=5.4.2
   - zlib=1.2.13
   - pip:
-    - dill==0.3.6
-    - joblib==1.3.1
-    - numpy==1.25.0
-    - phacts==1.8
-    - pip==23.1.2
-    - scikit-learn==1.3.0
-    - scipy==1.11.1
-    - setuptools==67.8.0
-    - sklearn==0.0.post5
-    - threadpoolctl==3.1.0
-    - wheel==0.38.4
-prefix: /Users/pengxue/miniconda3/miniconda3/envs/RP_phacts
+      - dill==0.3.6
+      - joblib==1.3.1
+      - numpy==1.25.0
+      - phacts==1.8
+      - scikit-learn==1.3.0
+      - scipy==1.11.1
+      - sklearn==0.0.post5
+      - threadpoolctl==3.1.0
+prefix: /dss/dsshome1/09/ge85hit2/miniconda3/envs/RP_phacts
