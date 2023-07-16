@@ -20,7 +20,7 @@ function cpdeePhage(){
     local resources_dir=$2
     if [ ! -e "$wdpath/DeePhage" ];then
         echo "copy deephage script to $wdpath"
-        cp -r $resources_dir/DeePhage $wdpath
+        cp -r $resources_dir $wdpath
         echo 'done'
     else
         echo "DeePhage source code exist in $wdpath"
@@ -57,6 +57,7 @@ conda_tmp=`dirname $conda_path`
 conda_home=`dirname $conda_tmp`
 source $conda_home/etc/profile.d/conda.sh
 conda activate RP_deephage
+source ../env/RP_Deephage.source.sh
 
 
 ## prepare environment

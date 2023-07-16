@@ -10,11 +10,16 @@ from collections import defaultdict
 import pandas as pd
 from time import sleep
 
+script_dir = str(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append("%s/bin"%(script_dir))
+from merged_all import parse_result
+
+ 
+wkdir = str(os.getcwd())
+
 ################
 ## default #####
-
-script_dir = str(os.path.dirname(os.path.abspath(__file__)))
-wkdir = str(os.getcwd())
+################
 
 anno = argparse.ArgumentParser(description="Replication cycle prediction for phage. current support: replidec, phact, bacphlip, phageAI, deephage. Usage: python RepliPhage.py -i test.faa -r -p -b -a -d")
 anno.add_argument('--version', action='version', version='RepliPhage v1.1')
@@ -63,11 +68,6 @@ anno.add_argument('-cf', '--phactsF',action='store_true',dest="phactsF",default=
 #anno.add_argument('-bc', '--pdbC',type=float, default="1e-5", dest="bc", help="pdb creteria. discard the not meet this creteria")
 #anno.add_argument('-bf', '--pdbF',action='store_true',dest="bf",default=False, help="force rerun pdb")
 
-#anno.add_argument('-l',type=str, nargs=1, default='1000',
-#                  help='length in basepairs to limit input sequences [default=1000, can increase but not decrease]')
-#anno.add_argument('-m', type=str, nargs=1, default=str(vibrant_path) + '/files/',
-#                  help='path to original "files" directory that contains .tsv and model files (if moved from default location)')
-
 
 args = anno.parse_args()
 thread=args.t
@@ -77,7 +77,7 @@ print("Results will be store at %s"%outputD)
 
 ## perpare the dir
 if not os.path.exists(str(outputD)):
-    Popen('mkdir -P ' + str(outputD) + ' 2>/dev/null', shell=True)
+    Popen('mkdir -p ' + str(outputD) + ' 2>/dev/null', shell=True)
 
 
 ###############
@@ -89,7 +89,7 @@ replidec_src=os.path.join(script_dir,"src/run_Replidec.sh")
 
 ##deephage
 deephage_src=os.path.join(script_dir,"src/run_Deephage.sh")
-deephage_source_code=os.path.join(script_dir,"resources/Deephage")
+deephage_source_code=os.path.join(script_dir,"resources/DeePhage")
 
 ##bacphlip
 bacphlip_src=os.path.join(script_dir,"src/run_bacphlip.sh")
@@ -140,18 +140,24 @@ phacts_src=os.path.join(script_dir,"src/run_phacts.sh")
 ##########################
 #### Function ############
 ##########################
-
+def create_dir(dir_path):
+    if not os.path.exists(str(dir_path)):
+        print("mkdir %s"%dir_path)
+        obj=Popen('mkdir -p ' + str(dir_path) + ' 2>/dev/null', shell=True)
+        obj.wait()
 
 def oneStepRun(inputfile, prefix, wd, db, outD, src, otherPara="", force=False):
     print("###### %s begin ######"%prefix)
     print("%s force:"%prefix,force)
 
+     
+    create_dir(wd)
     ##### replidec ########
     if prefix == "replidec":
         outPath = "%s/%s.%s.opt.tsv" % (wd,prefix, db)
-
+        
         if not os.path.exists(outPath) or force:
-            replidec_cmd="sh {src} {inputf} {wd} {summary} {db} '{para}' 2>&1 >RP_replidec.log".format(
+            replidec_cmd="sh {src} {inputf} {wd} {summary} {db} '{para}' 2>&1 >{wd}/RP_replidec.log".format(
                     src=src, inputf=inputfile, wd=wd, summary="%s.%s.opt.tsv"%(prefix,db),
                     db=db, para=otherPara)
             print(replidec_cmd)
@@ -165,7 +171,7 @@ def oneStepRun(inputfile, prefix, wd, db, outD, src, otherPara="", force=False):
         outPath = "%s/%s.opt.tsv" % (wd,prefix) 
 
         if not os.path.exists(outPath) or force:
-            deephage_cmd="sh {src} {inputf} {wd} {summary} {db} '{para}' 2>&1 >RP_deephage.log".format(
+            deephage_cmd="sh {src} {inputf} {wd} {summary} {db} '{para}' 2>&1 >{wd}/RP_deephage.log".format(
                     src=src, inputf=inputfile, wd=wd, summary="%s.opt.tsv"%(prefix),
                     db=db, para=otherPara)
             print(deephage_cmd)
@@ -179,7 +185,7 @@ def oneStepRun(inputfile, prefix, wd, db, outD, src, otherPara="", force=False):
         outPath = "%s/bacphlip_report.txt" % (wd)
 
         if not os.path.exists(outPath) or force:
-            bacphlip_cmd="sh {src} {inputf} {wd} {summary} {db} '{para}' 2>&1 >RP_bacphlip.log".format(
+            bacphlip_cmd="sh {src} {inputf} {wd} {summary} {db} '{para}' 2>&1 >{wd}/RP_bacphlip.log".format(
                     src=src, inputf=inputfile, wd=wd, summary="%s.opt.tsv"%(prefix),
                     db=db, para=otherPara)
             print(bacphlip_cmd)
@@ -193,7 +199,7 @@ def oneStepRun(inputfile, prefix, wd, db, outD, src, otherPara="", force=False):
         outPath = "%s/%s.opt.tsv" % (wd,prefix)
 
         if not os.path.exists(outPath) or force:
-            phabox_cmd="sh {src} {inputf} {wd} {summary} {db} '{para}' 2>&1 >RP_phabox.log".format(
+            phabox_cmd="sh {src} {inputf} {wd} {summary} {db} '{para}' 2>&1 >{wd}/RP_phabox.log".format(
                     src=src, inputf=inputfile, wd=wd, summary="%s.opt.tsv"%(prefix),
                     db=db, para=otherPara)
             print(phabox_cmd)
@@ -207,7 +213,7 @@ def oneStepRun(inputfile, prefix, wd, db, outD, src, otherPara="", force=False):
         outPath = "%s/%s.opt.tsv" % (wd,prefix)
 
         if not os.path.exists(outPath) or force:
-            phacts_cmd="sh {src} {inputf} {wd} {summary} {db} '{para}' 2>&1 >RP_phacts.log".format(
+            phacts_cmd="sh {src} {inputf} {wd} {summary} {db} '{para}' 2>&1 >{wd}/RP_phacts.log".format(
                     src=src, inputf=inputfile, wd=wd, summary="%s.opt.tsv"%(prefix),
                     db=db, para=otherPara)
             print(phacts_cmd)
@@ -255,7 +261,6 @@ if args.replidec:
     
     replidect = Thread(target=oneStepRun,args=argsL, kwargs=kwargsD)
     replidect.start()
-    #runHmmsearch(input_faa, "kegg", keggOptD, kegg_db, otherPara="-T 40 --cpu %s"%(thread))
 
 ############################  Run DeePhage  ##########################
 if args.deephage:
@@ -268,8 +273,6 @@ if args.deephage:
 
     deephaget = Thread(target=oneStepRun,args=argsL, kwargs=kwargsD)
     deephaget.start()
-    #runHmmsearch(input_faa, "vog", vogOptD, vog_db, otherPara="-T 40 --cpu %s"%(thread))
-
 
 ############################  Run BACPHLIP ##########################
 if args.bacphlip:
@@ -282,7 +285,6 @@ if args.bacphlip:
 
     bacphlipt = Thread(target=oneStepRun,args=argsL, kwargs=kwargsD)
     bacphlipt.start()
-    #runHmmsearch(input_faa, "pfam", pfamOptD, pfam_db, otherPara="-T 40 --cpu %s"%(thread))
 
 ############################  Run PhaBOX  ##########################
 if args.phabox:
@@ -295,7 +297,6 @@ if args.phabox:
 
     phaboxt = Thread(target=oneStepRun,args=argsL, kwargs=kwargsD)
     phaboxt.start()
-    #runHmmsearch(input_faa, "vog", vogOptD, vog_db, otherPara="-T 40 --cpu %s"%(thread))
 
 ############################  Run PHACTS  ##########################
 if args.phacts:
@@ -308,7 +309,7 @@ if args.phacts:
 
     phactst = Thread(target=oneStepRun,args=argsL, kwargs=kwargsD)
     phactst.start()
-    #runHmmsearch(input_faa, "vog", vogOptD, vog_db, otherPara="-T 40 --cpu %s"%(thread))
+
 ###########################  Run/Parse PHROG hmmsearih ##########################
 #if args.phrog:
 #    phrogOptD=os.path.join(outputD,"phrog")
@@ -319,28 +320,6 @@ if args.phacts:
 #                "program":"hmmsearch"}
 #    phrogt = Thread(target=oneStepRun,args=argsL, kwargs=kwargsD)
 #    phrogt.start()
-#
-############################  Run/Parse Uniprot(Swiss-prot) phmmer ##########################
-#if args.uniprot:
-#    uniprotOptD=os.path.join(outputD,"uniprot")
-#    argsL = [input_faa, "uniprot", uniprotOptD, uniprot_db, outD]
-#    kwargsD = {"otherPara":"-T 40 --cpu %s"%(thread),
-#                "creteria":args.uc,
-#                "force":args.uf,
-#                "program":"phmmer"}
-#    uniprott = Thread(target=oneStepRun,args=argsL, kwargs=kwargsD)
-#    uniprott.start()
-#
-############################  Run/Parse Uniprot(Swiss-prot) phmmer ##########################
-#if args.pdb:
-#    pdbOptD=os.path.join(outputD,"pdb")
-#    argsL = [input_faa, "pdb", pdbOptD, pdb_db, outD]
-#    kwargsD = {"otherPara":"-T 40 --cpu %s"%(thread),
-#               "creteria":args.bc,
-#               "force":args.bf,
-#               "program":"phmmer"}
-#    pdbt = Thread(target=oneStepRun,args=argsL, kwargs=kwargsD)
-#    pdbt.start()
 #
 ############################
 ##### fetch result #########
@@ -363,7 +342,14 @@ if args.phacts:
 #if args.pdb:
 #    pdbt.join()
 #
-print(outD)
+#print(outD)
+
+###############
+## merge 
+###############
+print("Merge all the output, please wait.")
+output_summary=os.path.join(outputD,"ReliPhage.summary.txt")
+parse_result(input_list,outD,output_summary)
 
 #summaryFile = os.path.join(outputD,"Vanno_summary.tsv")
 #fmt_outD = split_dict_for_pandas(outD)
