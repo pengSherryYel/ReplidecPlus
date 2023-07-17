@@ -57,7 +57,10 @@ conda_tmp=`dirname $conda_path`
 conda_home=`dirname $conda_tmp`
 source $conda_home/etc/profile.d/conda.sh
 conda activate RP_deephage
-source ../env/RP_Deephage.source.sh
+
+script_realpath=`realpath $0`
+script_dir=`dirname $script_realpath`
+source $script_dir/../env/RP_Deephage.source.sh
 
 
 ## prepare environment

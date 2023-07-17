@@ -12,8 +12,14 @@ def parse_result(input_list, resultD, output_file):
    
     softwares=['replidec', 'deephage', 'bacphlip', 'phabox', 'phacts']
     for software,infile in resultD.items():
-        print(software,infile)
-        if infile:
+
+        clen=0
+        with open(infile,"r") as f:
+            c=f.readlines()
+            clen = len(c)
+        
+        print(software,infile,clen)
+        if infile and clen > 2:
             if software == "replidec":
                 header=['sample_name','pfam_label','bc_label', 'final_label','match_gene_number']
                 new_header=['sample_name','replidec_pfam','replidec_bc', 'replidec_final','replidec_match_gene_number']
@@ -91,7 +97,9 @@ def parse_result(input_list, resultD, output_file):
                 phactsDf = d.loc[:,["sampleID", "lifestyle"]]
                 phactsDf.columns=['sample_name','phacts_label']
                 inputDf = inputDf.merge(phactsDf, on="sample_name", how="left")
-                
+        elif clen < 2:
+            print("WARNING: %s not complete. please rerun!!" %software)
+
     print(inputDf)
     ## merged all
     inputDf.to_csv(output_file, sep=",", index=False)
