@@ -88,7 +88,8 @@ if not os.path.exists(str(outputD)):
 replidec_src=os.path.join(script_dir,"src/run_Replidec.sh")
 
 ##deephage
-deephage_src=os.path.join(script_dir,"src/run_Deephage.sh")
+deephage_src=os.path.join(script_dir,"src/run_Deephage_v2.sh")
+#deephage_src=os.path.join(script_dir,"src/run_Deephage.sh")
 deephage_source_code=os.path.join(script_dir,"resources/DeePhage")
 
 ##bacphlip

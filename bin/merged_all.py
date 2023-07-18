@@ -8,7 +8,7 @@ from collections import defaultdict, Counter
 ## merge all the output
 def parse_result(input_list, resultD, output_file):
     inputDf = pd.read_csv(input_list,names=['sample_name','file'],sep="\t").loc[:,["sample_name"]]
-    #print(inputDf )
+    print("## Number of input sample:",len(inputDf))
    
     softwares=['replidec', 'deephage', 'bacphlip', 'phabox', 'phacts']
     for software,infile in resultD.items():
@@ -18,7 +18,8 @@ def parse_result(input_list, resultD, output_file):
             c=f.readlines()
             clen = len(c)
         
-        print(software,infile,clen)
+        print("%s:%s\t%s\n"%(software,clen-1,infile))
+
         if infile and clen > 2:
             if software == "replidec":
                 header=['sample_name','pfam_label','bc_label', 'final_label','match_gene_number']
@@ -30,10 +31,12 @@ def parse_result(input_list, resultD, output_file):
                 inputDf = inputDf.merge(replidecDf, on="sample_name", how="left")
                  
             elif software == "deephage":
-                d = pd.read_csv(infile,header=0,sep=",")
+                d = pd.read_csv(infile,header=0,sep=",",quotechar = '"')
+                #print(d)
                 resultD = {}
                 for i in d.index:
                     sampleid = d.loc[i,"sampleID"]
+                    
                     if sampleid not in resultD:
                         resultD[sampleid] = [0,0,0]
                         
@@ -99,9 +102,11 @@ def parse_result(input_list, resultD, output_file):
                 inputDf = inputDf.merge(phactsDf, on="sample_name", how="left")
         elif clen < 2:
             print("WARNING: %s not complete. please rerun!!" %software)
-
+    
     print(inputDf)
+    
     ## merged all
+    print("!! SUMMARY RESULT: store at %s"%output_file)
     inputDf.to_csv(output_file, sep=",", index=False)
     
 if __name__ == "__main__":
