@@ -9,15 +9,15 @@ import sys
 inseq_list=sys.argv[1]
 #tokens=['nwt3zR9SwDOOfw5eeChbK5jZx3vdUl']
 tokens=[
-#'f3vyJFrOEvYD74AeIFn98qIwfuxf0yP',
+'3vyJFrOEvYD74AeIFn98qIwfuxf0yP',
 #'nwt3zR9SwDOOfw5eeChbK5jZx3vdUl',
-'Md2nZaSjPm2ap2hUP6ZHCNGJihdq3S',
+#'Md2nZaSjPm2ap2hUP6ZHCNGJihdq3S',
 #'4ghWnwDNzxT2lb142SlJK83YuyVNEr',
 #'MIpSPrBaUiX5Ccd08nhWwcbjXqgZPt',
 #'koqGTapXXIywL2XCFqmprzrF23MwNB',
 #'a5XCrN5VayHzXYvEVxheO35hSikNWF'
 ]
-csv_file = "phageai_report.csv"
+csv_file = "%s_phageai_report.csv"%inseq_list
 
 from phageai.lifecycle.classifier import LifeCycleClassifier
 
@@ -43,15 +43,15 @@ for sampleid, path in inputD.items():
     try:
         print("Use token:%s"%token)
         prediction_results[sampleid] = lcc.predict(fasta_path=os.path.realpath(path))
-        time.sleep(1)
     except Exception as e:
         print(tokens)
         if tokens:
             print("change token")
             token = tokens.pop()
-            lcc = LifeCycleClassifier(access_token=token)
-            prediction_results[sampleid] = lcc.predict(fasta_path=os.path.realpath(path))
+            #lcc = LifeCycleClassifier(access_token=token)
+            #prediction_results[sampleid] = lcc.predict(fasta_path=os.path.realpath(path))
         else:
+            #print(f'[PhageAI] Phage {sampleid} raised an exception "{e}"')
             print('[PhageAI] Phage %s raised an exception %s'%(sampleid,e))
     finally:
         print(sampleid, prediction_results.get(sampleid))

@@ -99,7 +99,14 @@ done < $indexfullpath
 cd ./DeePhage
 ./DeePhage $merged_seq_realpath ./deephage_prediction.csv
 cd ..
-tail -n +2 ./DeePhage/deephage_prediction.csv|sed 's/^\"//g'|sed 's/|/,\"/1' >> $summaryopt
+
+grep_opt=`grep \" ./DeePhage/deephage_prediction.csv`
+if [ -n "$grep_opt" ];then
+    echo "result contain comma, try to solve"
+    tail -n +2 ./DeePhage/deephage_prediction.csv|sed 's/^\"//g'|sed 's/|/,\"/1' >> $summaryopt
+else
+    tail -n +2 ./DeePhage/deephage_prediction.csv|sed 's/^\"//g'|sed 's/|/,/1' >> $summaryopt
+fi
 
 conda deactivate 
 cd $currentdir

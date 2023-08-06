@@ -348,8 +348,9 @@ if args.phacts:
 ###############
 ## merge 
 ###############
+sleep(2)
 print("Merge all the output, please wait.")
-output_summary=os.path.join(outputD,"ReliPhage.summary.txt")
+output_summary=os.path.join(outputD,"RepliPhage.summary.txt")
 parse_result(input_list,outD,output_summary)
 
 #summaryFile = os.path.join(outputD,"Vanno_summary.tsv")
