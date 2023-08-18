@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 echo "downloading DeePhage"
-git clone git@github.com:shufangwu/DeePhage.git ../resources/
+git clone git@github.com:shufangwu/DeePhage.git ../resources/Deephage
 
 echo "downloading MATLAB Runtime Installer need by DeePhage"
 r_dir="../resources/mcr_tmp"
