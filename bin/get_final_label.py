@@ -49,9 +49,10 @@ def final_lable(inputf,outputf):
                 label = 'Virulent'
         common.append(label)
         weightL.append("%s|%s"%(t["Temperate"],t["Virulent"]))
-        print(t)
+        #print(t)
         #print(countert)
         #print(label)
     ldf["final_replication_cycle"] = common
     ldf["weight_T|V"] = weightL
     ldf.loc[:,["sample_name","final_replication_cycle","weight_T|V"]].to_csv(outputf)
+    print("!! SUMMARY FINAL RESULT: store at %s"%outputf)
