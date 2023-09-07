@@ -13,6 +13,7 @@ from time import sleep
 script_dir = str(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append("%s/bin"%(script_dir))
 from merged_all import parse_result
+from get_final_label import final_lable 
 
  
 wkdir = str(os.getcwd())
@@ -350,28 +351,10 @@ if args.phacts:
 ###############
 sleep(2)
 print("Merge all the output, please wait.")
-output_summary=os.path.join(outputD,"RepliPhage.summary.txt")
+output_summary=os.path.join(outputD,"RepliPhage.summary.detail.txt")
 parse_result(input_list,outD,output_summary)
 
-#summaryFile = os.path.join(outputD,"Vanno_summary.tsv")
-#fmt_outD = split_dict_for_pandas(outD)
-#res_df = pd.DataFrame.from_dict(fmt_outD)
-#res_df = res_df.fillna("NA")
-#print(res_df)
-#
-### add phrog annotation
-#if args.phrog:
-#    phrog_db_anno_df = pd.read_csv(phrog_db_anno,sep="\t",names=["phrog_ori","color","phrog_annot","phrog_category"])
-#    phrog_db_anno_df["phrogID"] = ["phrog_%s"%i for i in phrog_db_anno_df.phrog_ori]
-#    phrog_db_anno_df_sub = phrog_db_anno_df.loc[:,["phrog_annot","phrog_category","phrogID"]]
-#    res_df = res_df.reset_index().merge(phrog_db_anno_df_sub,left_on="phrog_des",right_on="phrogID",how="left")
-#
-### add pdb annotation
-#if args.pdb:
-#    pdb_db_anno_df = pd.read_csv(pdb_db_anno,sep="\t",names=["pdb_id","pdb_annot"])
-#    res_df = res_df.merge(pdb_db_anno_df,left_on="pdb_des",right_on="pdb_id",how="left")
-#
-### select coloumn to save
-#res_df.to_csv(summaryFile,index=True,sep="\t")
-#
+## generate the final
+final_summary=os.path.join(outputD,"RepliPhage.summary.final.txt")
+final_lable(output_summary,final_summary)
 
