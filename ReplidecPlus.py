@@ -22,7 +22,7 @@ wkdir = str(os.getcwd())
 ## default #####
 ################
 
-anno = argparse.ArgumentParser(description="Replication cycle prediction for phage. current support: replidec, bacphlip, deephage. Usage: python RepliPhage.py -i test.faa -r -p -b -d")
+anno = argparse.ArgumentParser(description="Replication cycle prediction for phage. current support: replidec, bacphlip, deephage, phabox. Usage: python ReplidecPlus.py -i test.faa -r -p -b -d")
 anno.add_argument('--version', action='version', version='ReplidecPlus v1.1')
 
 ##require
