@@ -4,7 +4,9 @@
 RepliDecPlus integrate tools for predict phage replication cycle
 
 ## Introduction
-![Workflow](RepliDecPlus.png RepliDecPlus)
+
+![Workflow](./RepliDecPlus.png "RepliDecPlus workflow")
+
 RepliDecPlus has 3 steps:
 1. Running individual tools
 2. Collect resultes and scores from these tools
@@ -18,6 +20,8 @@ final prediction label.
 ## Known issues
 
 ## References
+### Citation
+
 
 ## License / Copyright
 
