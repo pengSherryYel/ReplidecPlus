@@ -4,7 +4,6 @@ RepliDecPlus integrate tools for predict phage replication cycle.
 
 Current support: RepliDec, PhaBOX/phaTYP, BACPHLIP, DeePhage. 
 
----
 
 ## Introduction
 
@@ -23,7 +22,7 @@ RepliDecPlus has 3 steps:
 3. Use the an in-house scoring system to re-calculate the confidence for the final prediction.
     * Following the evaluation results, we have formulated a comprehensive scoring system. This system is instrumental in assigning appropriate weights to the confidence levels associated with each result, thereby facilitating the derivation of a refined final prediction.
 
----
+
 
 ## Installation
 We prepare the environment use Conda. Please install **conda** first.
@@ -57,7 +56,7 @@ After success prepare the environment and packages. There will be five conda env
 4. RP_phabox: environment for PhaTYP/PhaBOX
 5. RP_replidec: environment for RepliDec
 
----
+
 ## Usage
 current support: RepliDec, PhaBOX/phaTYP, BACPHLIP, PhageAI, DeePhage. 
 ### Qucik start
@@ -142,13 +141,11 @@ python ../ReplidecPlus.py -i sequence.list -o example_repliplus -t 4 -r -b -p -d
 
 
 
----
-
 ## Known issues
 1. the minimum length of input sequence is 3k bp. If the length is too short, it will significantly infulece the prediction accuracy.
 2. RepliDec Plus will take long time to predict very large dataset. if possible, you can seperate the input query sequences into small ones. Then run them parallel. This will save a lot of time.
 
----
+
 
 ## References
 
