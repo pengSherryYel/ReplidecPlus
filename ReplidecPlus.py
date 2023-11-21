@@ -22,7 +22,7 @@ wkdir = str(os.getcwd())
 ## default #####
 ################
 
-anno = argparse.ArgumentParser(description="Replication cycle prediction for phage. current support: replidec, bacphlip, deephage, phabox. Usage: python ReplidecPlus.py -i test.faa -r -p -b -d")
+anno = argparse.ArgumentParser(description="Replication cycle prediction for phage. current support: replidec, bacphlip, deephage, phabox. Usage: python ReplidecPlus.py -i input.txt -r -p -b -d")
 anno.add_argument('--version', action='version', version='ReplidecPlus v1.1')
 
 ##require
@@ -57,9 +57,9 @@ anno.add_argument('-pp', '--phabox_parameter',type=str, dest="phabox_para",
 anno.add_argument('-pf', '--phaboxF',action='store_true',dest="phaboxF",default=False, help="force rerun phaTYP")
 
 ##PHACTS
-anno.add_argument('-c', '--phacts',action='store_true',dest="phacts",default=False, help="run phacts")
-anno.add_argument('-cf', '--phactsF',action='store_true',dest="phactsF",default=False, help="force rerun phacts")
-#
+# anno.add_argument('-c', '--phacts',action='store_true',dest="phacts",default=False, help="run phacts")
+# anno.add_argument('-cf', '--phactsF',action='store_true',dest="phactsF",default=False, help="force rerun phacts")
+# #
 
 
 args = anno.parse_args()

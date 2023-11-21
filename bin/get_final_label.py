@@ -4,8 +4,8 @@ from collections import Counter
 import sys
 import os
 
-inputf = sys.argv[1]
-outputf = sys.argv[2]
+# inputf = sys.argv[1]
+# outputf = sys.argv[2]
 
 def final_lable(inputf,outputf):
 
