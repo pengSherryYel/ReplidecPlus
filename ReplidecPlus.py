@@ -260,16 +260,16 @@ if args.phabox:
     phaboxt.start()
 
 ############################  Run PHACTS  ##########################
-if args.phacts:
-    sleep(2)
-    phactsOptD=os.path.join(outputD,"phacts")
-    argsL = [input_list, "phacts", phactsOptD, "", outD]
-    kwargsD = {"otherPara":"",
-                "force":args.phactsF,
-                "src":phacts_src}
-
-    phactst = Thread(target=oneStepRun,args=argsL, kwargs=kwargsD)
-    phactst.start()
+#if args.phacts:
+#    sleep(2)
+#    phactsOptD=os.path.join(outputD,"phacts")
+#    argsL = [input_list, "phacts", phactsOptD, "", outD]
+#    kwargsD = {"otherPara":"",
+#                "force":args.phactsF,
+#                "src":phacts_src}
+#
+#    phactst = Thread(target=oneStepRun,args=argsL, kwargs=kwargsD)
+#    phactst.start()
 
 ###########################  Run/Parse PHROG hmmsearih ##########################
 #if args.phrog:
