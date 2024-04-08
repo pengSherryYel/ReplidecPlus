@@ -15,7 +15,6 @@ def final_lable(inputf,outputf):
     
     ## load pre results 
     ldf = pd.read_csv(inputf)
-    #ldf = pd.read_csv("/Users/pengxue/notneed4icolud/PROJECT/lifestyle_v2/v6/v6_testD3/IBD.merged.RepliPhage.summary.txt")
     
     common=[]
     weightL=[]
@@ -56,3 +55,7 @@ def final_lable(inputf,outputf):
     ldf["weight_T|V"] = weightL
     ldf.loc[:,["sample_name","final_replication_cycle","weight_T|V"]].to_csv(outputf)
     print("!! SUMMARY FINAL RESULT: store at %s"%outputf)
+
+
+if __name__=="__main__":
+    final_lable("/Users/pengxue/notneed4icolud/PROJECT/lifestyle_v2/v6/v6_testD3/IBD.merged.RepliPhage.summary.txt","summary.txt")

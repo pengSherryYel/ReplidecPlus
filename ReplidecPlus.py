@@ -297,8 +297,8 @@ if args.bacphlip:
 if args.phabox:
     phaboxt.join()
 
-if args.phacts:
-    phactst.join()
+#if args.phacts:
+#    phactst.join()
 
 #if args.pdb:
 #    pdbt.join()
