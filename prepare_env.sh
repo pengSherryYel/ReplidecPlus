@@ -5,8 +5,8 @@ cd env
 echo "prepare base env"
 conda env create -n RP_base --file ./RP_base.yml
 
-#echo "prepare phact"
-#conda env create -n RP_phacts --file ./RP_phacts.yml
+echo "prepare phact"
+conda env create -n RP_phacts --file ./RP_phacts.yml
 
 echo "prepare bacphlip"
 conda env create -n RP_bacphlip --file ./RP_bacphlip.yml

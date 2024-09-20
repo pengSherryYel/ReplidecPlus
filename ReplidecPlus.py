@@ -57,8 +57,8 @@ anno.add_argument('-pp', '--phabox_parameter',type=str, dest="phabox_para",
 anno.add_argument('-pf', '--phaboxF',action='store_true',dest="phaboxF",default=False, help="force rerun phaTYP")
 
 ##PHACTS
-# anno.add_argument('-c', '--phacts',action='store_true',dest="phacts",default=False, help="run phacts")
-# anno.add_argument('-cf', '--phactsF',action='store_true',dest="phactsF",default=False, help="force rerun phacts")
+anno.add_argument('-c', '--phacts',action='store_true',dest="phacts",default=False, help="run phacts")
+anno.add_argument('-cf', '--phactsF',action='store_true',dest="phactsF",default=False, help="force rerun phacts")
 # #
 
 
