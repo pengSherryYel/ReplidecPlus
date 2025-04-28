@@ -9,7 +9,8 @@ echo "RUN BACPHLIP"
 conda_path=`which conda`
 conda_tmp=`dirname $conda_path`
 conda_home=`dirname $conda_tmp`
-source $conda_home/etc/profile.d/conda.sh
+#source $conda_home/etc/profile.d/conda.sh
+. $conda_home/etc/profile.d/conda.sh
 
 current_path=`realpath $0`
 parent_dir=`dirname $current_path`
