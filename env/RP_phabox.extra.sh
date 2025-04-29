@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-git clone git@github.com:KennthShang/PhaBOX.git ../resources/PhaBOX
+git clone https://github.com/KennthShang/PhaBOX.git ../resources/PhaBOX
 
 cd ../resources/PhaBOX
 
