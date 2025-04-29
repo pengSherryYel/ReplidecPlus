@@ -16,7 +16,9 @@ conda env create -n RP_deephage --file RP_Deephage.yml
 sh RP_Deephage.extra.sh
 
 echo "prepare phabox"
-conda env create -n RP_phabox --file RP_phabox.yml
+#conda env create -n RP_phabox --file RP_phabox.yml
+## v2
+conda create -n phabox2 phabox=2.1.11 -c conda-forge -c bioconda -y
 sh RP_phabox.extra.sh
 
 echo 'prepare replidec'
