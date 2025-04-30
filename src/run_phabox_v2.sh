@@ -36,6 +36,7 @@ merged_seq_realpath=`realpath $merged_seq`
 if [ -e $merged_seq_realpath ];then
     rm -rf $merged_seq_realpath
 fi
+
 while IFS=$'\t' read -ra line;do
     echo "process $line"
     sampleID=${line[0]}
@@ -47,6 +48,7 @@ done < $indexfullpath
 
 phabox2 --contigs $merged_seq_realpath $otherpara --outpth $workdir --dbdir $db 
 
+tail -n +2 $workdir/final_prediction/phatyp_prediction.tsv|sed 's/|/,/1' >> $summaryopt
 conda deactivate 
 cd $currentdir
 
