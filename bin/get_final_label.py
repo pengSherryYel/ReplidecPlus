@@ -24,16 +24,17 @@ def final_lable(inputf,outputf):
              "Chronic": 0}
         countert = Counter()
         for col in ["deephage_final","phabox_final","bacphlip_label","replidec_final"]:
-            lifestyle = ldf.loc[row,col]
-            if lifestyle == "Temperate" or lifestyle == "Virulent":
-                #print(load_weights.query('software==@col'))
-                weight=load_weights.query('software==@col')[lifestyle].values[0]
-                t[lifestyle] += weight
-                
-            elif lifestyle == "Chronic":
-                t[lifestyle] += 1
-                
-            countert[lifestyle] += 1
+            if col in ldf.columns:
+                lifestyle = ldf.loc[row,col]
+                if lifestyle == "Temperate" or lifestyle == "Virulent":
+                    #print(load_weights.query('software==@col'))
+                    weight=load_weights.query('software==@col')[lifestyle].values[0]
+                    t[lifestyle] += weight
+                    
+                elif lifestyle == "Chronic":
+                    t[lifestyle] += 1
+                    
+                countert[lifestyle] += 1
         #print(t)
         label=""
         if t["Chronic"] > 0:

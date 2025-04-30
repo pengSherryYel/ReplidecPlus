@@ -53,7 +53,7 @@ anno.add_argument('-bf', '--bacphlipF',action='store_true',dest="bacphlipF",defa
 ##PhaBOX_PhaTYP
 anno.add_argument('-p', '--phabox',action='store_true',dest="phabox",default=False, help="run phaTYP from PhaBOX")
 anno.add_argument('-pp', '--phabox_parameter',type=str, dest="phabox_para",
-                  default='--len 3000', help="define phabox parameter")
+                  default='--task phatyp --threads 8 --len 3000', help="define phabox parameter")
 anno.add_argument('-pf', '--phaboxF',action='store_true',dest="phaboxF",default=False, help="force rerun phaTYP")
 
 ##PHACTS
@@ -89,10 +89,9 @@ deephage_source_code=os.path.join(script_dir,"resources/DeePhage")
 bacphlip_src=os.path.join(script_dir,"src/run_bacphlip.sh")
 
 ##phagebox
-##v2 is merged seq then predict, ori file is to predict each of them
+##v2 is merged seq then predict, ori file is to predict each of them; and suit for phabox v2
 phabox_src=os.path.join(script_dir,"src/run_phabox_v2.sh")
-#phabox_src=os.path.join(script_dir,"src/run_phabox.sh")
-phabox_source_code=os.path.join(script_dir,"resources/PhaBOX")
+phabox_source_code=os.path.join(script_dir,"resources/PhaBOX/phabox_db_v2")
 
 ##phacts
 phacts_src=os.path.join(script_dir,"src/run_phacts.sh")
