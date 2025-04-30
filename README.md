@@ -119,8 +119,7 @@ docker run -v `pwd`:/data pengsherry/replidec_plus conda run -n RP_base python R
   sh ReplidecPlus/utility/fasta2list.sh your_query_seq.fasta sequence.list split_dir 
 
   ## for Docker (this will add /data prefix for each sequence)
-  docker run -v `pwd`:/data pengsherry/replidec_plus python ReplidecPlus/utility/fasta2list_forDocker.sh
-  /data/your_query_seq.fasta /data/sequence.list /data/split_dir
+  docker run -v `pwd`:/data pengsherry/replidec_plus python ReplidecPlus/utility/fasta2list_forDocker.sh /data/your_query_seq.fasta /data/sequence.list /data/split_dir
   ```
 
 ### Output (`-o`)
