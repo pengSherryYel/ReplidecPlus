@@ -2,7 +2,7 @@
 
 RepliDecPlus integrate tools for predict phage replication cycle.
 
-Current support: RepliDec, PhaBOX/phaTYP, BACPHLIP, DeePhage. 
+**Current support: RepliDec, PhaBOX/phaTYP, BACPHLIP, DeePhage.**
 
 
 ## Introduction
@@ -23,11 +23,12 @@ RepliDecPlus has 3 steps:
     * Following the evaluation results, we have formulated a comprehensive scoring system. This system is instrumental in assigning appropriate weights to the confidence levels associated with each result, thereby facilitating the derivation of a refined final prediction.
 
 
+## Installation 
+We prepare the environment use **Conda/Docker**. You can choose one of them to use it.
 
-## Installation
-We prepare the environment use Conda. Please install **conda** first.
+### 1. Conda
 
-### 1. Conda installation (If you have, please skip it)
+### 1.1 Conda installation (If you have, please skip it)
 
 ```
 ## linux
@@ -40,7 +41,7 @@ Other platform please follow this download url: https://docs.conda.io/projects/m
 
 **PS: Because some software can run only on Linux, so we recommand use linux based system.**
 
-### 2. Clone RepliDecPlus Git repository and set up a Conda environment and all necssary dependent packages
+### 1.2 Clone RepliDecPlus Git repository and set up a Conda environment and all necssary dependent packages
 
 ```
 git clone https://github.com/pengSherryYel/ReplidecPlus.git
@@ -49,6 +50,17 @@ sh ./prepare_env.sh
 ```
 `prepare_env.sh` not only prepare the environment but also install all the related packages.
 
+### 2. Docker
+
+### 2.1 Pull Docker image
+```
+docker pull pengsherry/replidec_plus
+
+```
+
+
+## Success Installation 
+
 After success prepare the environment and packages. There will be five conda environment genererted. All five enviroment will startswith "RP". 
 1. RP_base: main environment
 2. RP_bacphlip：environment for BACPHIP
@@ -56,14 +68,36 @@ After success prepare the environment and packages. There will be five conda env
 4. RP_phabox: environment for PhaTYP/PhaBOX
 5. RP_replidec: environment for RepliDec
 
+To check the installation, you can use following commands to check
+```
+## for conda
+conda info -e
+
+## for docker
+docker run pengsherry/replidec_plus conda info -e
+```
+
 
 ## Usage
-current support: RepliDec, PhaBOX/phaTYP, BACPHLIP, PhageAI, DeePhage. 
+current support: **RepliDec, PhaBOX/phaTYP, BACPHLIP, DeePhage**. 
+
 ### Qucik start
+If you use conda, you can use these commands to run
 ```
+## for conda
 conda activate RP_base
-python ./ReplidecPlus.py -i input.txt -r -p -b -a -d -t 10
+python ReplidecPlus/ReplidecPlus.py -i input.txt -r -p -b -d -t 10
 ```
+
+If you use Docker, you can use the command below. 
+Please pay attention for "**-v \`pwd\`:/data**". This will mount your local folder to folder /data within Docker image. You can change to any local folder, but **please keep /data**, for example: `-v your_folder:/data`. 
+And please put your input in your mounted local folder, so that the software can access them.
+```
+docker run -v `pwd`:/data pengsherry/replidec_plus conda run -n RP_base python ReplidecPlus/ReplidecPlus.py -i
+/data/input.txt -o /data/ReplidecPlus -r -p -b -d -t 10
+```
+
+
 ### INPUT (TEXT OR FASTA file) (`-i`)
 * TEXT
 
@@ -81,11 +115,16 @@ python ./ReplidecPlus.py -i input.txt -r -p -b -a -d -t 10
 
   RepliDecPlus can not direct use fasta file. We prepare a scirpt to transform fasta file into text format
   ```
-  cd utility
-  sh fasta2list.sh your_query_seq.fasta sequence.list 
+  ## for Conda
+  sh ReplidecPlus/utility/fasta2list.sh your_query_seq.fasta sequence.list split_dir 
+
+  ## for Docker (this will add /data prefix for each sequence)
+  docker run -v `pwd`:/data pengsherry/replidec_plus python ReplidecPlus/utility/fasta2list_forDocker.sh
+  /data/your_query_seq.fasta /data/sequence.list /data/split_dir
   ```
+
 ### Output (`-o`)
-There will be four folders generate under the path set by `-o`, default is current workdir. And two important file 
+There will be four folders generate under the path set by `-o`, default is current workdir. Moreover two important files that combine all predictions from these tools.
 
 **FOLDER**: store the results from each tools
 1. bacphlip  
@@ -130,7 +169,7 @@ options:
 
 ```
 
-## Example
+## Example (Conda)
 ```
 #!/usr/bin/bash
 conda activate RP_base
@@ -149,7 +188,7 @@ python ../ReplidecPlus.py -i sequence.list -o example_repliplus -t 4 -r -b -p -d
 
 ## References
 
-### Citation
+## Citation
 
 
 
