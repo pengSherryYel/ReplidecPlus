@@ -48,7 +48,7 @@ done < $indexfullpath
 
 phabox2 --contigs $merged_seq_realpath $otherpara --outpth $workdir --dbdir $db 
 
-tail -n +2 $workdir/final_prediction/phatyp_prediction.tsv|sed 's/|/,/1'|sed 's/\t/,/g`' >> $summaryopt
+tail -n +2 $workdir/final_prediction/phatyp_prediction.tsv|sed 's/|/,/1'|sed 's/\t/,/g' >> $summaryopt
 conda deactivate 
 cd $currentdir
 
