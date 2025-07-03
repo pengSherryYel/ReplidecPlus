@@ -36,10 +36,11 @@ anno.add_argument('-t', type=int, default='3',
 
 ##repliedc
 anno.add_argument('-r', '--replidec',action='store_true',dest="replidec",default=False, help="run replidec")
-anno.add_argument('-rd', '--replidec_db',type=str, dest="replidec_db",choices=["all","prokaryote"],
-                  default='prokaryote', help="define replidec database")
+# db parameter removed in new version
+#anno.add_argument('-rd', '--replidec_db',type=str, dest="replidec_db",choices=["all","prokaryote"],
+#                  default='prokaryote', help="define replidec database")
 anno.add_argument('-rp', '--replidec_parameter',type=str, dest="replidec_para",
-                  default='-c 1e-5 -m 1e-5 -b 1e-6', help="define replidec parameter")
+                  default='-e 1e-5 -m 1e-5 -b 1e-6', help="define replidec parameter")
 anno.add_argument('-rf', '--replidecF',action='store_true',dest="replidecF",default=False, help="force rerun replidec")
 
 ##Deephage
@@ -57,8 +58,8 @@ anno.add_argument('-pp', '--phabox_parameter',type=str, dest="phabox_para",
 anno.add_argument('-pf', '--phaboxF',action='store_true',dest="phaboxF",default=False, help="force rerun phaTYP")
 
 ##PHACTS
-anno.add_argument('-c', '--phacts',action='store_true',dest="phacts",default=False, help="run phacts")
-anno.add_argument('-cf', '--phactsF',action='store_true',dest="phactsF",default=False, help="force rerun phacts")
+#anno.add_argument('-c', '--phacts',action='store_true',dest="phacts",default=False, help="run phacts")
+#anno.add_argument('-cf', '--phactsF',action='store_true',dest="phactsF",default=False, help="force rerun phacts")
 # #
 
 
@@ -82,7 +83,6 @@ replidec_src=os.path.join(script_dir,"src/run_Replidec.sh")
 
 ##deephage
 deephage_src=os.path.join(script_dir,"src/run_Deephage_v2.sh")
-#deephage_src=os.path.join(script_dir,"src/run_Deephage.sh")
 deephage_source_code=os.path.join(script_dir,"resources/DeePhage")
 
 ##bacphlip
@@ -117,9 +117,9 @@ def oneStepRun(inputfile, prefix, wd, db, outD, src, otherPara="", force=False):
         outPath = "%s/%s.%s.opt.tsv" % (wd,prefix, db)
         
         if not os.path.exists(outPath) or force:
-            replidec_cmd="sh {src} {inputf} {wd} {summary} {db} '{para}' 2>&1 >{wd}/RP_replidec.log".format(
+            replidec_cmd="sh {src} {inputf} {wd} {summary} '{para}' 2>&1 >{wd}/RP_replidec.log".format(
                     src=src, inputf=inputfile, wd=wd, summary="%s.%s.opt.tsv"%(prefix,db),
-                    db=db, para=otherPara)
+                    para=otherPara)
             print(replidec_cmd)
             obj=Popen(replidec_cmd, shell=True)
             obj.wait()
@@ -169,18 +169,18 @@ def oneStepRun(inputfile, prefix, wd, db, outD, src, otherPara="", force=False):
             print("Skip %s the running part, cause output file found!"%prefix)
 
     ##### phacts ########
-    if prefix == "phacts":
-        outPath = "%s/%s.opt.tsv" % (wd,prefix)
+    #if prefix == "phacts":
+    #    outPath = "%s/%s.opt.tsv" % (wd,prefix)
 
-        if not os.path.exists(outPath) or force:
-            phacts_cmd="sh {src} {inputf} {wd} {summary} {db} '{para}' 2>&1 >{wd}/RP_phacts.log".format(
-                    src=src, inputf=inputfile, wd=wd, summary="%s.opt.tsv"%(prefix),
-                    db=db, para=otherPara)
-            print(phacts_cmd)
-            obj=Popen(phacts_cmd, shell=True)
-            obj.wait()
-        else:
-            print("Skip %s the running part, cause output file found!"%prefix)
+    #    if not os.path.exists(outPath) or force:
+    #        phacts_cmd="sh {src} {inputf} {wd} {summary} {db} '{para}' 2>&1 >{wd}/RP_phacts.log".format(
+    #                src=src, inputf=inputfile, wd=wd, summary="%s.opt.tsv"%(prefix),
+    #                db=db, para=otherPara)
+    #        print(phacts_cmd)
+    #        obj=Popen(phacts_cmd, shell=True)
+    #        obj.wait()
+    #    else:
+    #        print("Skip %s the running part, cause output file found!"%prefix)
 
     #elif prefix == "phmmer":
     #    hmm_outPath = "%s/%s.phmmer.tblout" % (wd, prefix)
@@ -190,6 +190,7 @@ def oneStepRun(inputfile, prefix, wd, db, outD, src, otherPara="", force=False):
     #    else:
     #        print("Skip %s the running part, cause output file found!"%prefix)
     #    annoD = load_hmmsearch_opt(hmm_outPath, creteria=1e-5, reverse=True)
+    
     outD[prefix] = os.path.realpath(outPath)
     print("###### %s end ######\n"%prefix)
 
@@ -270,7 +271,7 @@ if args.phabox:
 #    phactst = Thread(target=oneStepRun,args=argsL, kwargs=kwargsD)
 #    phactst.start()
 
-###########################  Run/Parse PHROG hmmsearih ##########################
+###########################  Run/Parse PHROG hmmsearch ##########################
 #if args.phrog:
 #    phrogOptD=os.path.join(outputD,"phrog")
 #    argsL = [input_faa, "phrog", phrogOptD, phrog_db, outD]

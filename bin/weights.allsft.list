@@ -1,7 +1,7 @@
 ,software,Temperate,Virulent,Chronic,average
-0,bacphlip_label,0.8933,0.9981,0.0,0.6305
-1,deephage_final,0.8756,0.8432,0.0,0.5729
-2,phabox_final,0.8232,0.9468,0.0,0.5255
-3,phacts_label,0.9004,0.5476,0.0,0.4827
+0,bacphlip_label,0.8950,0.9967,0.0,0.6306
+1,deephage_final,0.8751,0.7976,0.0,0.5576
+2,phabox_final,0.8134,0.8989,0.0,0.5708
+3,phacts_label,0.5688,0.3876,0.0,0.3188
 4,phageAI_label,0.7182,0.8827,0.6897,0.7635
-5,replidec_final,0.9681,0.8442,0.9655,0.926
+5,replidec_final,0.9520,0.7786,0.9677,0.8994
