@@ -44,8 +44,8 @@ RUN export PATH=/usr/src/replidecplus/ReplidecPlus:$PATH
 
 ## download database of Replidec
 RUN cd $(find /opt/conda/envs/RP_replidec/lib -path '*/site-packages/Replidec' -type d) && \
-wget https://zenodo.org/record/8101942/files/db_v0.3.1.tar.gz && \
-tar -zxvf db_v0.3.1.tar.gz
+wget https://zenodo.org/records/15781219/files/db_v0.3.2.tar.gz && \
+tar -zxvf db_v0.3.2.tar.gz
 
 ## activate conda
 #SHELL ["/bin/bash", "-c"]

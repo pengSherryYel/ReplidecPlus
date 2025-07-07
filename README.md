@@ -83,8 +83,9 @@ current support: **RepliDec, PhaBOX/phaTYP, BACPHLIP, DeePhage**.
 
 ### Qucik start
 If you use conda, you can use these commands to run
+Please check below input section to prepare the input data.
 ```
-## for conda
+## for Conda
 conda activate RP_base
 python ReplidecPlus/ReplidecPlus.py -i input.txt -r -p -b -d -t 10
 ```
@@ -93,6 +94,7 @@ If you use Docker, you can use the command below.
 Please pay attention for "**-v \`pwd\`:/data**". This will mount your local folder to folder /data within Docker image. You can change to any local folder, but **please keep /data**, for example: `-v your_folder:/data`. 
 And please put your input in your mounted local folder, so that the software can access them.
 ```
+## for Docker
 docker run -v `pwd`:/data pengsherry/replidec_plus conda run -n RP_base python ReplidecPlus/ReplidecPlus.py -i
 /data/input.txt -o /data/ReplidecPlus -r -p -b -d -t 10
 ```
@@ -168,13 +170,18 @@ options:
 
 ```
 
-## Example (Conda)
+## Example (Please navigate to example folder)
 ```
-#!/usr/bin/bash
-conda activate RP_base
 cd example
+
+## for conda
+conda activate RP_base
 sh ../utility/fasta2list.sh sequences.fasta sequence.list sequence_split 
 python ../ReplidecPlus.py -i sequence.list -o example_repliplus -t 4 -r -b -p -d 
+
+## for docker
+sh ../utility/fasta2list_forDocker.sh sequences.fasta sequence.list sequence_split
+docker run -v `pwd`:/data pengsherry/replidec_plus conda run -n RP_base python ReplidecPlus/ReplidecPlus.py -i /data/sequence.list -o /data/ReplidecPlus -t 4 -r -b -p -d
 ```
 
 
