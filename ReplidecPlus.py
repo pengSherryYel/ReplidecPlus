@@ -114,12 +114,13 @@ def oneStepRun(inputfile, prefix, wd, db, outD, src, otherPara="", force=False):
     create_dir(wd)
     ##### replidec ########
     if prefix == "replidec":
-        outPath = "%s/%s.%s.opt.tsv" % (wd,prefix, db)
+        #outPath = "%s/%s.%s.opt.tsv" % (wd,prefix, db)
+        outPath = "%s/%s.opt.tsv" % (wd,prefix)
         
         if not os.path.exists(outPath) or force:
-            replidec_cmd="sh {src} {inputf} {wd} {summary} '{para}' 2>&1 >{wd}/RP_replidec.log".format(
-                    src=src, inputf=inputfile, wd=wd, summary="%s.%s.opt.tsv"%(prefix,db),
-                    para=otherPara)
+            replidec_cmd="sh {src} {inputf} {wd} {summary} {db} '{para}' 2>&1 >{wd}/RP_replidec.log".format(
+                    src=src, inputf=inputfile, wd=wd, summary="%s.opt.tsv"%(prefix),
+                    db=db, para=otherPara)
             print(replidec_cmd)
             obj=Popen(replidec_cmd, shell=True)
             obj.wait()
@@ -215,7 +216,8 @@ outD = {}
 ###########################  Run Replidec  #########################
 if args.replidec:
     replidecOptD=os.path.join(outputD,"replidec")
-    argsL = [input_list, "replidec", replidecOptD, args.replidec_db, outD]
+    #argsL = [input_list, "replidec", replidecOptD, args.replidec_db, outD]
+    argsL = [input_list, "replidec", replidecOptD,"", outD]
     kwargsD = {"otherPara":"%s -t %s"%(args.replidec_para,thread),
                 "force":args.replidecF,
                 'src':replidec_src}

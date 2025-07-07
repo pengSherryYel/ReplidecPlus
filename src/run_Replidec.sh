@@ -3,7 +3,8 @@
 input_seq_list=$1
 workdir=$2
 summary=$3
-otherpara=$4
+db=${4:-""}
+otherpara=${5:-""}
 
 echo "RUN replidec"
 conda_path=`which conda`
