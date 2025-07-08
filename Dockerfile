@@ -21,7 +21,7 @@ RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -
 
 # 2. install Conda to /opt/conda
 RUN bash miniconda.sh -b -p $CONDA_DIR \
-    && rm miniconda.sh
+&& rm miniconda.sh
 
 # 3. add Conda to PATH env
 ENV PATH="$CONDA_DIR/bin:$PATH"
