@@ -13,7 +13,7 @@ RepliDecPlus has 3 steps:
 1. Running individual tools.
 
     * RepliDec used for complete genomes and metagenomic assemblies; 
-    *  PhaBOX/phaTYP and DeePhage for metagenomic assemblies; 
+    * PhaBOX/phaTYP and DeePhage for metagenomic assemblies; 
     * BACPHLIP for complete genomes;
 
 2. Collect resultes and scores from these tools.
@@ -84,15 +84,33 @@ current support: **RepliDec, PhaBOX/phaTYP, BACPHLIP, DeePhage**.
 ### Qucik start
 If you use conda, you can use these commands to run
 Please check below input section to prepare the input data.
+#### For Conda
 ```
 ## for Conda
 conda activate RP_base
 python ReplidecPlus/ReplidecPlus.py -i input.txt -r -p -b -d -t 10
 ```
 
+If you set your work directory using (-o), and the output folder is not empty OR you want to rerun one of the software.  
+You can use the force parameter to force run part of software.   
+`-rf`: force rerun replidec; `-pf`: force rerun phaTYP; 
+`-bf`: force rerun bacphlip; `-df`: force rerun deephage
+```
+## for Conda (Folder not empty OR rerun)
+conda activate RP_base
+python ReplidecPlus/ReplidecPlus.py -i input.txt -r -rf -p -pf -b -bf -d -df -t 10
+```
+
+#### For Docker
 If you use Docker, you can use the command below. 
-Please pay attention for "**-v \`pwd\`:/data**". This will mount your local folder to folder /data within Docker image. You can change to any local folder, but **please keep /data**, for example: `-v your_folder:/data`. 
-And please put your input in your mounted local folder, so that the software can access them.
+Please pay attention for "**-v \`pwd\`:/data**". This will mount your local folder to folder /data within Docker image. You can
+change to any local folder, but **please keep /data** if you use `utility/fasta2list_forDocker.sh`, for example: `-v your_folder_include_input_sequence:/data`. Because
+`utility/fasta2list_forDocker.sh` will help you prepare the input file (TEXT format), and the default path of input sequences are
+under /data. 
+
+You can also mount everything by yourself, for more detail, please check https://docs.docker.com/engine/storage/volumes/.
+
+And please **DO NOT FORGET to put your input in your mounted local folder**, so that the software can access them.
 ```
 ## for Docker
 docker run -v `pwd`:/data pengsherry/replidec_plus conda run -n RP_base python ReplidecPlus/ReplidecPlus.py -i
@@ -145,24 +163,27 @@ There will be four folders generate under the path set by `-o`, default is curre
 
 ### parameters
 ```
-Usage: python RepliPhage.py -i  -r -p -b -a -d
+Replication cycle prediction for phage. current support: replidec, bacphlip,
+deephage, phabox. 
+Usage: python ReplidecPlus.py -i input.txt -r -p -b -d
 
 options:
   -h, --help            show this help message and exit
   --version             show program's version number and exit
-  -i I                  input file, two cloumn. sample seqence_path. tab sepearte.
-  -o O                  path to deposit output folder and temporary files, will create if doesn't exist [default= working directory]
+  -i I                  input file, two cloumn. sample seqence_path. tab
+                        sepearte.
+  -o O                  path to deposit output folder and temporary files,
+                        will create if doesn't exist [default= working
+                        directory]
   -t T                  thread number used in each software
   -r, --replidec        run replidec
-  -rd {all,prokaryote}, --replidec_db {all,prokaryote}
-                        define replidec database
   -rp REPLIDEC_PARA, --replidec_parameter REPLIDEC_PARA
                         define replidec parameter
   -rf, --replidecF      force rerun replidec
   -d, --deephage        run deephage
   -df, --deephageF      force rerun deephage
   -b, --bacphlip        run bacphlip
-  -bf, --bacphlipF      force rerun bacphlipF
+  -bf, --bacphlipF      force rerun bacphlip
   -p, --phabox          run phaTYP from PhaBOX
   -pp PHABOX_PARA, --phabox_parameter PHABOX_PARA
                         define phabox parameter
