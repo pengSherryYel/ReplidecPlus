@@ -10,7 +10,7 @@ outputlist_real=`realpath $outputlist`
 if [ -e $split_dir ];then rm -r $split_dir && mkdir $split_dir; else mkdir $split_dir;fi
 
 cd $split_dir
-less $inputfna_real |sed 's/|/__/g' > changed_name.fna
+less $inputfna_real |sed 's/|/__/g'|sed 's/,/_/g'|sed 's/ /_/g' > changed_name.fna
 awk -F " " '/^>/ {close(F); ID=$1; gsub("^>", "", ID); F=ID".fasta"} {print >> F}' changed_name.fna && rm -rf changed_name.fna 
 
 ## fit the path to docker mount environment
