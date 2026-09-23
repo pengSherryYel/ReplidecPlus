@@ -9,7 +9,7 @@ RepliDecPlus currently uses:
 * RepliDec v0.3.6 with database v0.3.3.
 * DeePhage v1.0
 * BACPHLIP v0.9.6
-* PhaBOX/phaTYP v2.1.11
+* PhaBOX/phaTYP v2.1.13
 
 ## Introduction
 

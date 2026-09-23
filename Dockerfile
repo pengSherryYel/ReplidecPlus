@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:24.04
 
 ## use bash instead of sh
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     unzip \
     libxt6 \
+    patchelf \
     && rm -rf /var/lib/apt/lists/*
 
 # ----------- install Miniconda -----------
@@ -45,6 +46,11 @@ RUN cd $RP_DIR
 RUN git clone https://github.com/pengSherryYel/ReplidecPlus.git 
 RUN cd $RP_DIR/ReplidecPlus && bash prepare_env.sh && conda info --envs
 RUN export PATH=/usr/src/replidecplus/ReplidecPlus:$PATH
+
+## set for the phabox
+RUN find /opt/conda/envs/RP_phabox \
+    -name libtorch_cpu.so \
+    -exec patchelf --clear-execstack {} \;
 
 ## download database of Replidec
 RUN cd $(find /opt/conda/envs/RP_replidec/lib -path '*/site-packages/Replidec' -type d) && \

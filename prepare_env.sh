@@ -20,9 +20,7 @@ sh RP_Deephage.extra.sh
 conda clean -afy
 
 echo "prepare phabox"
-#conda env create -n RP_phabox --file RP_phabox.yml
-## v2
-conda create -n RP_phabox phabox=2.1.11 -c conda-forge -c bioconda -y
+conda create -n RP_phabox phabox=2.1.13 -c conda-forge -c bioconda -y
 sh RP_phabox.extra.sh
 conda clean -afy
 

@@ -4,6 +4,9 @@ git clone https://github.com/KennthShang/PhaBOX.git ../resources/PhaBOX
 
 cd ../resources/PhaBOX
 
+# install the latest scripts
+pip install .
+
 # database
 echo "Downloading database"
 if [ ! -e "phabox_db_v2.zip" ];then
@@ -12,4 +15,4 @@ unzip phabox_db_v2.zip
 else
 echo "file exist! skip"
 fi
-
+cd -
