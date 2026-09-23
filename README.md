@@ -6,10 +6,10 @@ RepliDecPlus integrate tools for predict phage replication cycle.
 
 ## Version
 RepliDecPlus currently uses:
-RepliDec v0.3.6 with database v0.3.3.
-DeePhage v1.0
-BACPHLIP v0.9.6
-PhaBOX/phaTYP v2.1.11
+* RepliDec v0.3.6 with database v0.3.3.
+* DeePhage v1.0
+* BACPHLIP v0.9.6
+* PhaBOX/phaTYP v2.1.11
 
 ## Introduction
 
@@ -122,7 +122,6 @@ And please **DO NOT FORGET to put your input in your mounted local folder**, so 
 docker run -v `pwd`:/data pengsherry/replidec_plus conda run -n RP_base python ReplidecPlus/ReplidecPlus.py -i
 /data/input.txt -o /data/ReplidecPlus -r -p -b -d -t 10
 ```
-
 
 ### INPUT (TEXT OR FASTA file) (`-i`)
 * TEXT

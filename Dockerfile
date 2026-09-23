@@ -25,6 +25,10 @@ RUN bash miniconda.sh -b -p $CONDA_DIR \
 
 # 3. add Conda to PATH env
 ENV PATH="$CONDA_DIR/bin:$PATH"
+RUN conda tos accept --override-channels \
+    --channel https://repo.anaconda.com/pkgs/main && \
+    conda tos accept --override-channels \
+    --channel https://repo.anaconda.com/pkgs/r
 #RUN conda init bash
 
 # ----------- install  ReplidecPlus ---------
@@ -43,9 +47,9 @@ RUN cd $RP_DIR/ReplidecPlus && bash prepare_env.sh && conda info --envs
 RUN export PATH=/usr/src/replidecplus/ReplidecPlus:$PATH
 
 ## download database of Replidec
-#RUN cd $(find /opt/conda/envs/RP_replidec/lib -path '*/site-packages/Replidec' -type d) && \
-#wget -O https://zenodo.org/records/22178169/files/db_v0.3.3.tgz && \
-#tar -zxvf db_v0.3.3.tgz
+RUN cd $(find /opt/conda/envs/RP_replidec/lib -path '*/site-packages/Replidec' -type d) && \
+wget https://zenodo.org/records/22178169/files/db_v0.3.3.tgz && \
+tar -zxvf db_v0.3.3.tgz
 
 ## activate conda
 #SHELL ["/bin/bash", "-c"]
