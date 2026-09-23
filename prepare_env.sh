@@ -1,4 +1,5 @@
 #!/usr/bin/bash
+set -euxo pipefail
 
 mkdir resources
 cd env
@@ -22,7 +23,7 @@ conda create -n RP_phabox phabox=2.1.11 -c conda-forge -c bioconda -y
 sh RP_phabox.extra.sh
 
 echo 'prepare replidec'
-conda create -n RP_replidec -c bioconda replidec
+conda create -n RP_replidec -c bioconda -c conda-forge replidec=0.3.6 -y
 
 #echo 'prepare phageAI'
 #conda env create -n RP_phageai --file RP_phageai.yml
