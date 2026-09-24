@@ -60,7 +60,7 @@ sh ./prepare_env.sh
 
 ### 2.1 Pull Docker image
 ```
-docker pull pengsherry/replidec_plus
+docker pull pengsherry/replidec_plus:v2.1
 
 ```
 
@@ -119,8 +119,7 @@ You can also mount everything by yourself, for more detail, please check https:/
 And please **DO NOT FORGET to put your input in your mounted local folder**, so that the software can access them.
 ```
 ## for Docker
-docker run -v `pwd`:/data pengsherry/replidec_plus conda run -n RP_base python ReplidecPlus/ReplidecPlus.py -i
-/data/input.txt -o /data/ReplidecPlus -r -p -b -d -t 10
+docker run --rm --platform linux/amd64 -v `pwd`:/data pengsherry/replidec_plus:v2.1 conda run -n RP_base python ReplidecPlus/ReplidecPlus.py -i /data/example/sequence.list -o /data/example/repliplus_v2.1 -t 2 -r -rf -p -pf -d -df -b -bf
 ```
 
 ### INPUT (TEXT OR FASTA file) (`-i`)
@@ -144,7 +143,7 @@ docker run -v `pwd`:/data pengsherry/replidec_plus conda run -n RP_base python R
   sh ReplidecPlus/utility/fasta2list.sh your_query_seq.fasta sequence.list split_dir 
 
   ## for Docker (this will add /data prefix for each sequence)
-  docker run -v `pwd`:/data pengsherry/replidec_plus python ReplidecPlus/utility/fasta2list_forDocker.sh /data/your_query_seq.fasta /data/sequence.list /data/split_dir
+  docker run --rm --platform linux/amd64 -v `pwd`:/data pengsherry/replidec_plus:v2.1 conda run -n RP_base sh /data/utility/fasta2list.sh /data/example/sequences.fasta /data/example/sequence.list /data/example/sequence_split
   ```
 
 ### Output (`-o`)
