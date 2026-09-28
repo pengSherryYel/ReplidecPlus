@@ -1,15 +1,22 @@
 # RepliDecPlus
 
-RepliDecPlus integrate tools for predict phage replication cycle.
+RepliDecPlus integrates tools for predicting phage replication cycles.
 
-**Current support: RepliDec, PhaBOX/phaTYP, BACPHLIP, DeePhage.**
+**Currently supported: RepliDec, PhaBOX/phaTYP, BACPHLIP, DeePhage.**
 
 ## Version
+
 RepliDecPlus currently uses:
-* RepliDec v0.3.6 with database v0.3.3.
-* DeePhage v1.0
-* BACPHLIP v0.9.6
-* PhaBOX/phaTYP v2.1.13
+
+- RepliDec v0.3.6 with database v0.3.3
+- DeePhage v1.0
+- BACPHLIP v0.9.6
+- PhaBOX/phaTYP v2.1.13
+
+RepliDec is an external dependency installed from Bioconda into the
+`RP_replidec` Conda environment. RepliDecPlus invokes its executable
+rather than embedding the RepliDec source code, so updates to RepliDec
+do not necessarily result in commits to this repository.
 
 ## Introduction
 
