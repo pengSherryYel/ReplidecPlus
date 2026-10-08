@@ -1,16 +1,27 @@
 # coding: utf-8
 # %load merged_all.py
 # %load merged_all.py
+import os
 import pandas as pd
 import numpy as np
 from collections import defaultdict, Counter
 
+
+
 ## merge all the output
-def parse_result(input_list, resultD, output_file):
-    inputDf = pd.read_csv(input_list,names=['sample_name','file'],sep="\t").loc[:,["sample_name"]]
-    print("## Number of input sample:",len(inputDf))
-   
-    softwares=['replidec', 'deephage', 'bacphlip', 'phabox', 'phacts']
+def parse_result(input_fasta, resultD, output_file):
+    contig_names = []
+    with open(input_fasta, "r") as f:
+        for line in f:
+            if line.startswith(">"):
+                contig_id = line.strip()[1:].split()[0]
+                contig_names.append(contig_id)
+
+
+    inputDf = pd.DataFrame({'sample_name': contig_names})
+
+    print("## Number of input genomes:",len(inputDf))
+
     for software,infile in resultD.items():
 
         clen=0
@@ -27,29 +38,29 @@ def parse_result(input_list, resultD, output_file):
                 d = pd.read_csv(infile,header=0,sep="\t")
                 replidecDf = d.loc[:,header]
                 replidecDf.columns =new_header
-                #print(replidecDf)
                 inputDf = inputDf.merge(replidecDf, on="sample_name", how="left")
                  
             elif software == "deephage":
                 d = pd.read_csv(infile,header=0,sep=",",quotechar = '"')
                 #print(d)
-                resultD = {}
+                # resultD = {}
+                deephage_counts = {}
                 for i in d.index:
                     sampleid = d.loc[i,"sampleID"]
                     
-                    if sampleid not in resultD:
-                        resultD[sampleid] = [0,0,0]
+                    if sampleid not in deephage_counts:
+                        deephage_counts[sampleid] = [0,0,0]
                         
                     lifestyle = d.loc[i,"lifestyle"]
                     if lifestyle == "temperate":
-                        resultD[sampleid][0]+=1
+                        deephage_counts[sampleid][0]+=1
                     elif lifestyle == "virulent":
-                        resultD[sampleid][1]+=1
+                        deephage_counts[sampleid][1]+=1
                     else:
-                        resultD[sampleid][2]+=1
+                        deephage_counts[sampleid][2]+=1
                 
                 t=[]
-                for sid,resultL in resultD.items():
+                for sid,resultL in deephage_counts.items():
                     deephage_final = "Virulent"
                     if resultL[0] > resultL[1]:
                         deephage_final = "Temperate"
@@ -63,28 +74,30 @@ def parse_result(input_list, resultD, output_file):
                 
             elif software == "bacphlip":
                 #print(infile)
-                bacphlipDf = pd.read_csv(infile,header=0,sep="\t").loc[:,["sampleID", "bacphlip_ressult"]]
+                bacphlipDf = pd.read_csv(infile,header=0,sep="\t").loc[:,["sampleID", "bacphlip_result"]]
+                print (bacphlipDf)
                 bacphlipDf.columns=['sample_name','bacphlip_label']
                 inputDf = inputDf.merge(bacphlipDf, on="sample_name", how="left")
                 
             elif software == "phabox":
-                d = pd.read_csv(infile,header=0,sep=",")
-                resultD = {}
+                d = pd.read_csv(infile,header=0,sep="\t")
+                # resultD = {}
+                phabox_counts = {}
                 for i in d.index:
-                    sampleid = d.loc[i,"SampleID"]
-                    if sampleid not in resultD:
-                        resultD[sampleid] = [0,0,0]
+                    sampleid = d.loc[i,"Accession"]
+                    if sampleid not in phabox_counts:
+                        phabox_counts[sampleid] = [0,0,0]
 
-                    lifestyle = d.loc[i,"Pred"]
+                    lifestyle = d.loc[i,"TYPE"]
                     if lifestyle == "temperate":
-                        resultD[sampleid][0]+=1
+                        phabox_counts[sampleid][0]+=1
                     elif lifestyle == "virulent":
-                        resultD[sampleid][1]+=1
+                        phabox_counts[sampleid][1]+=1
                     else:
-                        resultD[sampleid][2]+=1
+                        phabox_counts[sampleid][2]+=1
 
                 t=[]
-                for sid,resultL in resultD.items():
+                for sid,resultL in phabox_counts.items():
                     phabox_final = "Virulent"
                     if resultL[0] > resultL[1]:
                         phabox_final = "Temperate"
@@ -94,12 +107,7 @@ def parse_result(input_list, resultD, output_file):
                     t.append([sid, phabox_stat ,phabox_final])
                 phaboxDf = pd.DataFrame(t,columns=['sample_name',"phabox_T|V|O","phabox_final"])
                 inputDf = inputDf.merge(phaboxDf, on="sample_name", how="left")
-             
-            elif software == "phacts":
-                d = pd.read_csv(infile,header=0,sep="\t")
-                phactsDf = d.loc[:,["sampleID", "lifestyle"]]
-                phactsDf.columns=['sample_name','phacts_label']
-                inputDf = inputDf.merge(phactsDf, on="sample_name", how="left")
+
         elif clen < 2:
             print("WARNING: %s not complete. please rerun!!" %software)
     
@@ -110,5 +118,11 @@ def parse_result(input_list, resultD, output_file):
     inputDf.to_csv(output_file, sep=",", index=False)
     
 if __name__ == "__main__":
-    outD={'replidec': '/dss/dsshome1/09/ge85hit2/repliphage_code/RepliPhage/test/RepliPhage/replidec/replidec.prokaryote.opt.tsv','deephage': '/dss/dsshome1/09/ge85hit2/repliphage_code/RepliPhage/test/RepliPhage/deephage/deephage.opt.tsv','bacphlip': '/dss/dsshome1/09/ge85hit2/repliphage_code/RepliPhage/test/RepliPhage/bacphlip/bacphlip_report.txt','phabox': '/dss/dsshome1/09/ge85hit2/repliphage_code/RepliPhage/test/RepliPhage/phabox/phabox.opt.tsv','phacts': '/dss/dsshome1/09/ge85hit2/repliphage_code/RepliPhage/test/RepliPhage/phacts/phacts.opt.tsv'}
-    parse_result("example.txt",outD,"merged_all.tsv")    
+    outD = {
+        'replidec': '/dss/dsshome1/09/ge85hit2/repliphage_code/RepliPhage/test/RepliPhage/replidec/replidec.prokaryote.opt.tsv',
+        'deephage': '/dss/dsshome1/09/ge85hit2/repliphage_code/RepliPhage/test/RepliPhage/deephage/deephage.opt.tsv',
+        'bacphlip': '/dss/dsshome1/09/ge85hit2/repliphage_code/RepliPhage/test/RepliPhage/bacphlip/bacphlip_final_output.tsv',
+        'phabox': '/dss/dsshome1/09/ge85hit2/repliphage_code/RepliPhage/test/RepliPhage/phabox/phatyp_prediction/phatyp_prediction.tsv',
+        'phacts': '/dss/dsshome1/09/ge85hit2/repliphage_code/RepliPhage/test/RepliPhage/phacts/phacts.opt.tsv'}
+
+    parse_result("example.txt",outD,"merged_all.tsv")
