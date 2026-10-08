@@ -5,6 +5,7 @@ import argparse
 import sys
 import os
 import re
+import shutil
 from threading import Thread
 from collections import defaultdict
 import pandas as pd
@@ -26,7 +27,7 @@ anno = argparse.ArgumentParser(description="Replication cycle prediction for pha
 anno.add_argument('--version', action='version', version='ReplidecPlus v1.1')
 
 ##require
-anno.add_argument('-i', type=str, required=True, help='input file, two cloumn. sample\tseqence_path. tab sepearte.')
+anno.add_argument('-i', type=str, required=True, help='input fasta phage genome file')
 
 ##optional
 anno.add_argument('-o', type=str, default="./ReplidecPlus",
@@ -36,9 +37,7 @@ anno.add_argument('-t', type=int, default='3',
 
 ##repliedc
 anno.add_argument('-r', '--replidec',action='store_true',dest="replidec",default=False, help="run replidec")
-# db parameter removed in new version
-#anno.add_argument('-rd', '--replidec_db',type=str, dest="replidec_db",choices=["all","prokaryote"],
-#                  default='prokaryote', help="define replidec database")
+
 anno.add_argument('-rp', '--replidec_parameter',type=str, dest="replidec_para",
                   default='-e 1e-5 -m 1e-5 -b 1e-6', help="define replidec parameter")
 anno.add_argument('-rf', '--replidecF',action='store_true',dest="replidecF",default=False, help="force rerun replidec")
@@ -56,12 +55,6 @@ anno.add_argument('-p', '--phabox',action='store_true',dest="phabox",default=Fal
 anno.add_argument('-pp', '--phabox_parameter',type=str, dest="phabox_para",
                   default='--task phatyp --threads 8 --len 3000', help="define phabox parameter")
 anno.add_argument('-pf', '--phaboxF',action='store_true',dest="phaboxF",default=False, help="force rerun phaTYP")
-
-##PHACTS
-#anno.add_argument('-c', '--phacts',action='store_true',dest="phacts",default=False, help="run phacts")
-#anno.add_argument('-cf', '--phactsF',action='store_true',dest="phactsF",default=False, help="force rerun phacts")
-# #
-
 
 args = anno.parse_args()
 thread=args.t
@@ -91,10 +84,7 @@ bacphlip_src=os.path.join(script_dir,"src/run_bacphlip.sh")
 ##phagebox
 ##v2 is merged seq then predict, ori file is to predict each of them; and suit for phabox v2
 phabox_src=os.path.join(script_dir,"src/run_phabox_v2.sh")
-phabox_source_code=os.path.join(script_dir,"resources/PhaBOX/phabox_db_v2")
-
-##phacts
-phacts_src=os.path.join(script_dir,"src/run_phacts.sh")
+phabox_source_code=os.path.join(script_dir,"resources/PhaBOX/phabox_db_v2_2")
 
 
 ##########################
@@ -109,12 +99,12 @@ def create_dir(dir_path):
 def oneStepRun(inputfile, prefix, wd, db, outD, src, otherPara="", force=False):
     print("###### %s begin ######"%prefix)
     print("%s force:"%prefix,force)
-
-     
+    if force and os.path.exists(wd):
+        print(f"Force enabled: cleaning up existing directory {wd} before rerun")
+        shutil.rmtree(wd, ignore_errors=True)
     create_dir(wd)
     ##### replidec ########
     if prefix == "replidec":
-        #outPath = "%s/%s.%s.opt.tsv" % (wd,prefix, db)
         outPath = "%s/%s.opt.tsv" % (wd,prefix)
         
         if not os.path.exists(outPath) or force:
@@ -143,7 +133,7 @@ def oneStepRun(inputfile, prefix, wd, db, outD, src, otherPara="", force=False):
 
     ##### bacphlip ########
     elif prefix == "bacphlip":
-        outPath = "%s/bacphlip_report.txt" % (wd)
+        outPath = "%s/bacphlip_final_output.tsv" % (wd)
 
         if not os.path.exists(outPath) or force:
             bacphlip_cmd="sh {src} {inputf} {wd} {summary} {db} '{para}' 2>&1 >{wd}/RP_bacphlip.log".format(
@@ -169,29 +159,6 @@ def oneStepRun(inputfile, prefix, wd, db, outD, src, otherPara="", force=False):
         else:
             print("Skip %s the running part, cause output file found!"%prefix)
 
-    ##### phacts ########
-    #if prefix == "phacts":
-    #    outPath = "%s/%s.opt.tsv" % (wd,prefix)
-
-    #    if not os.path.exists(outPath) or force:
-    #        phacts_cmd="sh {src} {inputf} {wd} {summary} {db} '{para}' 2>&1 >{wd}/RP_phacts.log".format(
-    #                src=src, inputf=inputfile, wd=wd, summary="%s.opt.tsv"%(prefix),
-    #                db=db, para=otherPara)
-    #        print(phacts_cmd)
-    #        obj=Popen(phacts_cmd, shell=True)
-    #        obj.wait()
-    #    else:
-    #        print("Skip %s the running part, cause output file found!"%prefix)
-
-    #elif prefix == "phmmer":
-    #    hmm_outPath = "%s/%s.phmmer.tblout" % (wd, prefix)
-    #    dbseq = db
-    #    if not os.path.exists(hmm_outPath) or force:
-    #        hmm_outPath = runPhmmer(inputfile, prefix, wd, dbseq, otherPara="-T 40 --cpu 1")
-    #    else:
-    #        print("Skip %s the running part, cause output file found!"%prefix)
-    #    annoD = load_hmmsearch_opt(hmm_outPath, creteria=1e-5, reverse=True)
-    
     outD[prefix] = os.path.realpath(outPath)
     print("###### %s end ######\n"%prefix)
 
@@ -216,7 +183,6 @@ outD = {}
 ###########################  Run Replidec  #########################
 if args.replidec:
     replidecOptD=os.path.join(outputD,"replidec")
-    #argsL = [input_list, "replidec", replidecOptD, args.replidec_db, outD]
     argsL = [input_list, "replidec", replidecOptD,"", outD]
     kwargsD = {"otherPara":"%s -t %s"%(args.replidec_para,thread),
                 "force":args.replidecF,
@@ -261,29 +227,6 @@ if args.phabox:
     phaboxt = Thread(target=oneStepRun,args=argsL, kwargs=kwargsD)
     phaboxt.start()
 
-############################  Run PHACTS  ##########################
-#if args.phacts:
-#    sleep(2)
-#    phactsOptD=os.path.join(outputD,"phacts")
-#    argsL = [input_list, "phacts", phactsOptD, "", outD]
-#    kwargsD = {"otherPara":"",
-#                "force":args.phactsF,
-#                "src":phacts_src}
-#
-#    phactst = Thread(target=oneStepRun,args=argsL, kwargs=kwargsD)
-#    phactst.start()
-
-###########################  Run/Parse PHROG hmmsearch ##########################
-#if args.phrog:
-#    phrogOptD=os.path.join(outputD,"phrog")
-#    argsL = [input_faa, "phrog", phrogOptD, phrog_db, outD]
-#    kwargsD = {"otherPara":"-T 40 --cpu %s"%(thread),
-#                "creteria":args.rc,
-#                "force":args.rf,
-#                "program":"hmmsearch"}
-#    phrogt = Thread(target=oneStepRun,args=argsL, kwargs=kwargsD)
-#    phrogt.start()
-#
 ############################
 ##### fetch result #########
 ############################
@@ -299,13 +242,6 @@ if args.bacphlip:
 if args.phabox:
     phaboxt.join()
 
-#if args.phacts:
-#    phactst.join()
-
-#if args.pdb:
-#    pdbt.join()
-#
-#print(outD)
 
 ###############
 ## merge 
