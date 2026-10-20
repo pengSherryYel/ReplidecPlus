@@ -25,7 +25,7 @@ sh RP_phabox.extra.sh
 conda clean -afy
 
 echo 'prepare replidec'
-conda create -n RP_replidec -c bioconda -c conda-forge replidec=0.3.6 -y
+conda create -n RP_replidec -c bioconda -c conda-forge replidec=0.3.7 -y
 conda clean -afy
 
 #echo 'prepare phageAI'

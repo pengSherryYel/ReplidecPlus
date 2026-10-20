@@ -8,7 +8,7 @@ RepliDecPlus integrates tools for predicting phage replication cycles.
 
 RepliDecPlus currently uses:
 
-- RepliDec v0.3.6 with database v0.3.3
+- RepliDec v0.3.7 with database v0.3.3
 - DeePhage v1.0
 - BACPHLIP v0.9.6
 - PhaBOX/phaTYP v2.1.13
@@ -67,7 +67,7 @@ sh ./prepare_env.sh
 
 ### 2.1 Pull Docker image
 ```
-docker pull pengsherry/replidec_plus:v2.1
+docker pull pengsherry/replidec_plus:v2.2
 
 ```
 
