@@ -212,11 +212,11 @@ sh ../utility/fasta2list.sh sequences.fasta sequence.list sequence_split
 python ../ReplidecPlus.py -i sequence.list -o example_repliplus -t 4 -r -b -p -d 
 
 ## for docker
-sh ../utility/fasta2list_forDocker.sh sequences.fasta sequence.list sequence_split
-docker run -v `pwd`:/data pengsherry/replidec_plus conda run -n RP_base python ReplidecPlus/ReplidecPlus.py -i /data/sequence.list -o /data/ReplidecPlus -t 4 -r -b -p -d
+cd ReplidecPlus 
+docker run --rm --platform linux/amd64 -v `pwd`:/data pengsherry/replidec_plus:v2.2 conda run -n RP_base sh /data/utility/fasta2list.sh /data/example/sequences.fasta /data/example/sequence.list /data/example/sequence_split
+
+docker run --rm --platform linux/amd64 -v `pwd`:/data pengsherry/replidec_plus:v2.2 conda run -n RP_base python ReplidecPlus/ReplidecPlus.py -i /data/example/sequence.list -o /data/example/repliplus_v2.1 -t 2 -r -rf -p -pf -d -df -b -bf
 ```
-
-
 
 ## Known issues
 1. the minimum length of input sequence is 3k bp. If the length is too short, it will significantly infulece the prediction accuracy.
